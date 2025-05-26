@@ -4,13 +4,11 @@ A simple Model Context Protocol (MCP) server created for demonstration purposes,
 
 ## Overview
 
-This MCP server provides a collection of simple tools to demonstrate MCP functionality including:
+This MCP server provides a collection of tools, resources, and prompts to demonstrate comprehensive MCP functionality including:
 
-- Time and date utilities
-- Greeting generation
-- Date calculations
-- Learning tips (multiple categories: MCP, Python, Docker)
-- MCP resources for tips and documentation
+- **Tools**: Time and date utilities, greeting generation, date calculations, and learning tips
+- **Resources**: MCP development tips and documentation (multiple categories: MCP, Python, Docker)
+- **Prompts**: Professional prompt templates for code review, learning plans, debugging assistance, project planning, and MCP development
 
 ## Project Structure
 
@@ -140,9 +138,10 @@ python -m pytest tests/tests.py -v
 The test suite covers:
 
 - All MCP server tools and functionality
+- Resource retrieval and formatting
+- Prompt template generation and parameter handling
 - Error handling and edge cases
 - Client-server communication
-- Resource retrieval
 
 ## Available Tools
 
@@ -155,6 +154,67 @@ The test suite covers:
 
 1. **tips://mcp** - MCP development learning tips
 2. **tips://category/{category}** - Category-specific learning tips (mcp, python, docker)
+
+## Available Prompts
+
+The server provides 5 professional prompt templates for common development and learning workflows:
+
+### 1. Code Review Prompt (`code_review_prompt`)
+
+Generate structured code review requests with customizable parameters.
+
+**Parameters:**
+
+- `language` (optional, default: "python") - Programming language for review
+- `code_type` (optional, default: "function") - Type of code (function, class, module, etc.)
+
+**Usage:** Provides a comprehensive template for requesting detailed code reviews including quality, performance, security, and maintainability analysis.
+
+### 2. Learning Plan Prompt (`learning_plan_prompt`)
+
+Create personalized learning plans for any technology or skill.
+
+**Parameters:**
+
+- `topic` (required) - The subject or technology to learn
+- `skill_level` (optional, default: "beginner") - Current skill level (beginner, intermediate, advanced)
+- `timeframe` (optional, default: "1 month") - Available learning time
+
+**Usage:** Generates detailed learning plans with objectives, prerequisites, weekly breakdowns, resources, and assessment strategies.
+
+### 3. Debugging Assistant Prompt (`debugging_assistant_prompt`)
+
+Get systematic debugging guidance for different types of errors.
+
+**Parameters:**
+
+- `language` (optional, default: "python") - Programming language
+- `error_type` (optional, default: "runtime") - Type of error (runtime, syntax, logic, performance)
+
+**Usage:** Provides structured debugging approaches with specific methodologies based on error type and language.
+
+### 4. Project Planning Prompt (`project_planning_prompt`)
+
+Generate comprehensive project plans and architecture guidance.
+
+**Parameters:**
+
+- `project_type` (required) - Type of project (web app, API, mobile app, data pipeline, etc.)
+- `team_size` (optional, default: "1-3") - Development team size
+- `timeline` (optional, default: "1-3 months") - Project timeline
+
+**Usage:** Creates detailed project plans including architecture design, development phases, technical specifications, and best practices.
+
+### 5. MCP Development Prompt (`mcp_development_prompt`)
+
+Get assistance with Model Context Protocol development.
+
+**Parameters:**
+
+- `component_type` (optional, default: "tool") - MCP component type (tool, resource, prompt, server)
+- `complexity` (optional, default: "intermediate") - Complexity level (beginner, intermediate, advanced)
+
+**Usage:** Provides guidance for building MCP components with FastMCP, including implementation approaches, protocol compliance, code examples, and testing strategies.
 
 ## CI/CD
 
@@ -175,7 +235,9 @@ The workflow file is located at `.github/workflows/test.yml`.
 
 ## Example Usage in Claude
 
-Once configured, you can use prompts like:
+Once configured, you can use the server's capabilities through different types of interactions:
+
+### Tool Examples
 
 - "What time is it?"
 - "Greet me with my name John"
@@ -183,6 +245,21 @@ Once configured, you can use prompts like:
 - "Give me some learning tips for MCP"
 - "Give me some Python development tips"
 - "Give me some Docker tips"
+
+### Resource Examples
+
+- Ask Claude to access MCP development tips through the tips://mcp resource
+- Request category-specific tips using tips://category/python, tips://category/docker, etc.
+
+### Prompt Examples
+
+- "Use the code review prompt to help me review my Python function"
+- "Create a learning plan for FastAPI using the learning plan prompt"
+- "Help me debug this JavaScript performance issue using the debugging assistant prompt"
+- "Plan a mobile app project for a 5-person team using the project planning prompt"
+- "Guide me through building an MCP tool using the MCP development prompt"
+
+**Note:** Prompts provide structured templates that guide interactions and ensure comprehensive coverage of important topics.
 
 ## Course Information
 
