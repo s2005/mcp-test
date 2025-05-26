@@ -1,4 +1,4 @@
-# LinkedIn Demo MCP Server
+# Demo MCP Server
 
 A simple Model Context Protocol (MCP) server created for demonstration purposes, based on Morten Rand-Hendriksen's LinkedIn Learning course "Model Context Protocol (MCP): Hands-On with Agentic AI".
 
@@ -26,13 +26,14 @@ This MCP server provides a collection of simple tools to demonstrate MCP functio
 2. **Navigate to the project directory:**
 
    ```bash
-   cd D:\mcp\my.python\linkedin-demo
+   cd D:\mcp\my.python\mcp-test
    ```
 
 3. **Create and activate virtual environment:**
 
    ```bash
    python -m venv .venv
+   source .venv/Scripts/activate
 
    ```
 
@@ -76,7 +77,7 @@ mcp dev server.py
    ```json
    {
      "mcpServers": {
-       "linkedin-demo": {
+       "mcp-test": {
          "command": "C:\\Users\\YourUser\\.local\\bin\\uv.exe",
          "args": [
            "run",
@@ -84,7 +85,7 @@ mcp dev server.py
            "mcp[cli]",
            "mcp",
            "run",
-           "D:\\mcp\\my.python\\linkedin-demo\\server.py"
+           "D:\\mcp\\my.python\\mcp-test\\server.py"
          ]
        }
      }
