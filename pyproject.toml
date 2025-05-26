@@ -1,9 +1,74 @@
 [project]
-name = "linkedin-demo"
+name = "mcp-test"
 version = "0.1.0"
-description = "LinkedIn Demo MCP Server - A simple demonstration server"
+description = "MCP Test Server - A simple demonstration server"
 readme = "README.md"
 requires-python = ">=3.10"
 dependencies = [
     "mcp[cli]>=1.4.1",
+]
+
+[project.optional-dependencies]
+test = [
+    "pytest>=6.0",
+    "pytest-cov>=2.0",
+]
+dev = [
+    "pytest>=6.0",
+    "pytest-cov>=2.0",
+    "black>=23.0",
+    "flake8>=5.0",
+    "mypy>=1.0",
+]
+
+[dependency-groups]
+test = [
+    "pytest>=6.0",
+    "pytest-cov>=2.0",
+]
+dev = [
+    "pytest>=6.0",
+    "pytest-cov>=2.0",
+    "black>=23.0",
+    "flake8>=5.0",
+    "mypy>=1.0",
+]
+
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+py-modules = ["server", "client", "tests"]
+
+[tool.pytest.ini_options]
+minversion = "6.0"
+addopts = "-ra -q --strict-markers"
+testpaths = [
+    "tests.py",
+]
+python_files = [
+    "test_*.py",
+    "*_test.py",
+    "tests.py",
+]
+
+[tool.coverage.run]
+source = ["."]
+omit = [
+    "tests.py",
+    "test_*.py",
+    "*_test.py",
+]
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "def __repr__",
+    "if self.debug:",
+    "if settings.DEBUG",
+    "raise AssertionError",
+    "raise NotImplementedError",
+    "if 0:",
+    "if __name__ == .__main__.:",
 ]

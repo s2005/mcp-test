@@ -1,7 +1,7 @@
 from mcp.server.fastmcp import FastMCP
 import datetime
 import random
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, Any
 
 # Create an MCP server
 mcp = FastMCP("LinkedIn Demo")
@@ -77,7 +77,7 @@ def generate_greeting(name: str = "User") -> str:
     return random.choice(greetings)
 
 @mcp.tool()
-def calculate_days_until_date(target_date: str) -> Dict[str, any]:
+def calculate_days_until_date(target_date: str) -> Dict[str, Any]:
     """
     Calculate the number of days between today and a target date.
     
