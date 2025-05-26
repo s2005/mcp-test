@@ -105,6 +105,23 @@ mcp dev server.py
 1. **tips://mcp** - MCP development learning tips
 2. **tips://category/{category}** - Category-specific learning tips (mcp, python, docker)
 
+## CI/CD
+
+This project includes a GitHub Actions workflow that automatically runs tests on:
+
+- Push to main branch
+- Pull requests to main branch
+
+The workflow:
+
+- Tests against Python versions 3.10, 3.11, and 3.12
+- Installs dependencies using `uv`
+- Runs the test suite with `pytest`
+- Generates code coverage reports
+- Uploads coverage data to Codecov
+
+The workflow file is located at `.github/workflows/test.yml`.
+
 ## Example Usage in Claude
 
 Once configured, you can use prompts like:
