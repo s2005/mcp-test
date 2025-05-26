@@ -9,9 +9,8 @@ This MCP server provides a collection of simple tools to demonstrate MCP functio
 - Time and date utilities
 - Greeting generation
 - Date calculations
-- Simple todo creation
-- Learning tips
-- Server information
+- Learning tips (multiple categories: MCP, Python, Docker)
+- MCP resources for tips and documentation
 
 ## Setup
 
@@ -99,9 +98,12 @@ mcp dev server.py
 1. **get_current_time()** - Get current date and time
 2. **generate_greeting(name)** - Generate personalized greeting
 3. **calculate_days_until_date(target_date)** - Calculate days between dates
-4. **create_simple_todo(task, priority)** - Create todo items
-5. **get_learning_tips()** - Get MCP learning tips
-6. **demo_info()** - Get server information
+4. **get_learning_tips(category)** - Get learning tips for development (categories: mcp, python, docker)
+
+## Available Resources
+
+1. **tips://mcp** - MCP development learning tips
+2. **tips://category/{category}** - Category-specific learning tips (mcp, python, docker)
 
 ## Example Usage in Claude
 
@@ -110,9 +112,9 @@ Once configured, you can use prompts like:
 - "What time is it?"
 - "Greet me with my name John"
 - "How many days until Christmas 2024?"
-- "Create a todo to learn MCP with high priority"
 - "Give me some learning tips for MCP"
-- "Tell me about this demo server"
+- "Give me some Python development tips"
+- "Give me some Docker tips"
 
 ## Course Information
 
