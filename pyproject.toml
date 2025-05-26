@@ -1,6 +1,6 @@
 [project]
 name = "mcp-test"
-version = "0.1.0"
+version = "0.2.0"
 description = "MCP Test Server - A simple demonstration server"
 readme = "README.md"
 requires-python = ">=3.10"
@@ -39,24 +39,31 @@ requires = ["setuptools>=61.0", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [tool.setuptools]
-py-modules = ["server", "client", "tests"]
+packages = ["src"]
+package-dir = {"src" = "src"}
+
+[tool.setuptools.package-data]
+"src" = ["*.py"]
 
 [tool.pytest.ini_options]
 minversion = "6.0"
 addopts = "-ra -q --strict-markers"
 testpaths = [
-    "tests.py",
+    "tests",
 ]
 python_files = [
     "test_*.py",
     "*_test.py",
     "tests.py",
 ]
+pythonpath = [
+    "src"
+]
 
 [tool.coverage.run]
-source = ["."]
+source = ["src"]
 omit = [
-    "tests.py",
+    "tests/*",
     "test_*.py",
     "*_test.py",
 ]

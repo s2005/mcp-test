@@ -6,7 +6,7 @@ Test LinkedIn Demo MCP server using pytest
 import pytest
 import datetime
 from typing import Generator
-from client import SimpleMCPClient
+from src.client import SimpleMCPClient
 
 
 @pytest.fixture
@@ -15,9 +15,7 @@ def mcp_client() -> Generator[SimpleMCPClient, None, None]:
     Create and initialize SimpleMCPClient for testing.
 
     Yields:
-        Initialized SimpleMCPClient instance
-
-    Handles:
+        Initialized SimpleMCPClient instance    Handles:
         - Server startup
         - Client initialization
         - Cleanup on test completion
@@ -26,7 +24,7 @@ def mcp_client() -> Generator[SimpleMCPClient, None, None]:
 
     try:
         # Start server
-        server_started = client.start_server("python", ["server.py"])
+        server_started = client.start_server("python", ["src/server.py"])
         assert server_started, "Failed to start MCP server"
 
         # Initialize client
