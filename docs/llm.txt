@@ -32,7 +32,7 @@ This page provides an overview of applications that support the Model Context Pr
 | [Windsurf Editor][Windsurf]          | ❌           | ❌         | ✅       | ❌          | ❌     | Supports tools with AI Flow for collaborative development.         |   |                      |   |   |   |   |   |                               |
 | [Witsy][Witsy]                       | ❌           | ❌         | ✅       | ❌          | ❌     | Supports tools in Witsy.                                           |   |                      |   |   |   |   |   |                               |
 | [Zed][Zed]                           | ❌           | ✅         | ❌       | ❌          | ❌     | Prompts appear as slash commands                                   |   |                      |   |   |   |   |   |                               |
-| [SpinAI][SpinAI]                     | ❌           | ❌         | ✅       | ❌          | ❌     | Supports tools for Typescript AI Agents                            |   |                      |   |   |   |   |   |                               |
+| [SpinAI][SpinAI]                     | ❌           | ❌         | ✅       | ❌          | ❌     | Supports tools for Python AI Agents                                |   |                      |   |   |   |   |   |                               |
 | [OpenSumi][OpenSumi]                 | ❌           | ❌         | ✅       | ❌          | ❌     | Supports tools in OpenSumi                                         |   |                      |   |   |   |   |   |                               |
 | [Daydreams Agents][Daydreams]        | ✅           | ✅         | ✅       | ❌          | ❌     | Support for drop in Servers to Daydreams agents                    |   |                      |   |   |   |   |   |                               |
 | [Apify MCP Tester][Apify MCP Tester] | ❌           | ❌         | ✅       | ❌          | ❌     | Supports tools                                                     |   |                      |   |   |   |   |   |                               |
@@ -148,7 +148,7 @@ Claude Code is an interactive agentic coding tool from Anthropic that helps you 
 
 **Learn more:**
 
-* [Example of using MCP tools in agentic workflow](https://i-am-bee.github.io/beeai-framework/#/typescript/tools?id=using-the-mcptool-class)
+* [Example of using MCP tools in agentic workflow](https://i-am-bee.github.io/beeai-framework/#/python/tools?id=using-the-mcptool-class)
 
 ### Cline
 
@@ -295,12 +295,12 @@ Programmatically assemble prompts for LLMs using [GenAIScript](https://microsoft
 
 ### SpinAI
 
-[SpinAI](https://spinai.dev) is an open-source TypeScript framework for building observable AI agents. The framework provides native MCP compatibility, allowing agents to seamlessly integrate with MCP servers and tools.
+[SpinAI](https://spinai.dev) is an open-source Python framework for building observable AI agents. The framework provides native MCP compatibility, allowing agents to seamlessly integrate with MCP servers and tools.
 
 **Key features:**
 
 * Built-in MCP compatibility for AI agents
-* Open-source TypeScript framework
+* Open-source Python framework
 * Observable agent architecture
 * Native support for MCP tools integration
 
@@ -405,7 +405,7 @@ Benefits of adding MCP support:
 * Provide users with flexible integration options
 * Support local-first AI workflows
 
-To get started with implementing MCP in your application, check out our [Python](https://github.com/modelcontextprotocol/python-sdk) or [TypeScript SDK Documentation](https://github.com/modelcontextprotocol/typescript-sdk)
+To get started with implementing MCP in your application, check out our [Python SDK Documentation](https://github.com/modelcontextprotocol/python-sdk). For those interested in other languages, we also provide a [TypeScript SDK](https://github.com/modelcontextprotocol/typescript-sdk)
 
 ## Updates and corrections
 
@@ -534,7 +534,7 @@ The latest updates and improvements to MCP
 </Update>
 
 <Update label="2025-01-18" description="SDK and Server Improvements">
-  * Simplified, express-like API in the [TypeScript SDK](https://github.com/modelcontextprotocol/typescript-sdk)
+  * Simplified, express-like API in the [Python SDK](https://github.com/modelcontextprotocol/python-sdk) and [TypeScript SDK](https://github.com/modelcontextprotocol/typescript-sdk)
   * Added 8 new clients to the [clients page](https://modelcontextprotocol.io/clients)
 </Update>
 
@@ -646,35 +646,32 @@ All transports use [JSON-RPC](https://www.jsonrpc.org/) 2.0 to exchange messages
 MCP has these main types of messages:
 
 1. **Requests** expect a response from the other side:
-   ```typescript
-   interface Request {
-     method: string;
-     params?: { ... };
-   }
+   ```python
+   class Request(TypedDict):
+       method: str
+       params: NotRequired[Dict[str, Any]]
    ```
 
 2. **Results** are successful responses to requests:
-   ```typescript
-   interface Result {
-     [key: string]: unknown;
-   }
+   ```python
+   class Result(TypedDict):
+       # Any key-value pairs
+       pass
    ```
 
 3. **Errors** indicate that a request failed:
-   ```typescript
-   interface Error {
-     code: number;
-     message: string;
-     data?: unknown;
-   }
+   ```python
+   class Error(TypedDict):
+       code: int
+       message: str
+       data: NotRequired[Any]
    ```
 
 4. **Notifications** are one-way messages that don't expect a response:
-   ```typescript
-   interface Notification {
-     method: string;
-     params?: { ... };
-   }
+   ```python
+   class Notification(TypedDict):
+       method: str
+       params: NotRequired[Dict[str, Any]]
    ```
 
 ## Connection lifecycle
@@ -869,45 +866,48 @@ Prompts in MCP are predefined templates that can:
 
 Each prompt is defined with:
 
-```typescript
-{
-  name: string;              // Unique identifier for the prompt
-  description?: string;      // Human-readable description
-  arguments?: [              // Optional list of arguments
-    {
-      name: string;          // Argument identifier
-      description?: string;  // Argument description
-      required?: boolean;    // Whether argument is required
-    }
-  ]
-}
+```python
+from typing import Optional, List
+from dataclasses import dataclass
+
+@dataclass
+class PromptArgument:
+    name: str                    # Argument identifier
+    description: Optional[str]   # Argument description
+    required: Optional[bool]     # Whether argument is required
+
+@dataclass
+class Prompt:
+    name: str                           # Unique identifier for the prompt
+    description: Optional[str]          # Human-readable description
+    arguments: Optional[List[PromptArgument]]  # Optional list of arguments
 ```
 
 ## Discovering prompts
 
 Clients can discover available prompts through the `prompts/list` endpoint:
 
-```typescript
-// Request
+```python
+# Request
 {
-  method: "prompts/list"
+    "method": "prompts/list"
 }
 
-// Response
+# Response
 {
-  prompts: [
-    {
-      name: "analyze-code",
-      description: "Analyze code for potential improvements",
-      arguments: [
+    "prompts": [
         {
-          name: "language",
-          description: "Programming language",
-          required: true
+            "name": "analyze-code",
+            "description": "Analyze code for potential improvements",
+            "arguments": [
+                {
+                    "name": "language",
+                    "description": "Programming language",
+                    "required": True
+                }
+            ]
         }
-      ]
-    }
-  ]
+    ]
 }
 ```
 
@@ -915,32 +915,32 @@ Clients can discover available prompts through the `prompts/list` endpoint:
 
 To use a prompt, clients make a `prompts/get` request:
 
-````typescript
-// Request
+```python
+# Request
 {
-  method: "prompts/get",
-  params: {
-    name: "analyze-code",
-    arguments: {
-      language: "python"
+    "method": "prompts/get",
+    "params": {
+        "name": "analyze-code",
+        "arguments": {
+            "language": "python"
+        }
     }
-  }
 }
 
-// Response
+# Response
 {
-  description: "Analyze Python code for potential improvements",
-  messages: [
-    {
-      role: "user",
-      content: {
-        type: "text",
-        text: "Please analyze the following Python code for potential improvements:\n\n```python\ndef calculate_sum(numbers):\n    total = 0\n    for num in numbers:\n        total = total + num\n    return total\n\nresult = calculate_sum([1, 2, 3, 4, 5])\nprint(result)\n```"
-      }
-    }
-  ]
+    "description": "Analyze Python code for potential improvements",
+    "messages": [
+        {
+            "role": "user",
+            "content": {
+                "type": "text",
+                "text": "Please analyze the following Python code for potential improvements:\n\n```python\ndef calculate_sum(numbers):\n    total = 0\n    for num in numbers:\n        total = total + num\n    return total\n\nresult = calculate_sum([1, 2, 3, 4, 5])\nprint(result)\n```"
+            }
+        }
+    ]
 }
-````
+```
 
 ## Dynamic prompts
 
@@ -1252,26 +1252,29 @@ Clients can discover available resources through two main methods:
 
 Servers expose a list of concrete resources via the `resources/list` endpoint. Each resource includes:
 
-```typescript
-{
-  uri: string;           // Unique identifier for the resource
-  name: string;          // Human-readable name
-  description?: string;  // Optional description
-  mimeType?: string;     // Optional MIME type
-}
+```python
+from typing import Optional
+from dataclasses import dataclass
+
+@dataclass
+class Resource:
+    uri: str                    # Unique identifier for the resource
+    name: str                   # Human-readable name
+    description: Optional[str]  # Optional description
+    mimeType: Optional[str]     # Optional MIME type
 ```
 
 ### Resource templates
 
 For dynamic resources, servers can expose [URI templates](https://datatracker.ietf.org/doc/html/rfc6570) that clients can use to construct valid resource URIs:
 
-```typescript
-{
-  uriTemplate: string;   // URI template following RFC 6570
-  name: string;          // Human-readable name for this type
-  description?: string;  // Optional description
-  mimeType?: string;     // Optional MIME type for all matching resources
-}
+```python
+@dataclass
+class ResourceTemplate:
+    uriTemplate: str            # URI template following RFC 6570
+    name: str                   # Human-readable name for this type
+    description: Optional[str]  # Optional description
+    mimeType: Optional[str]     # Optional MIME type for all matching resources
 ```
 
 ## Reading resources
@@ -1280,19 +1283,20 @@ To read a resource, clients make a `resources/read` request with the resource UR
 
 The server responds with a list of resource contents:
 
-```typescript
-{
-  contents: [
-    {
-      uri: string;        // The URI of the resource
-      mimeType?: string;  // Optional MIME type
+```python
+from typing import Union
 
-      // One of:
-      text?: string;      // For text resources
-      blob?: string;      // For binary resources (base64 encoded)
-    }
-  ]
-}
+@dataclass
+class ResourceContent:
+    uri: str                    # The URI of the resource
+    mimeType: Optional[str]     # Optional MIME type
+    # One of:
+    text: Optional[str] = None      # For text resources
+    blob: Optional[str] = None      # For binary resources (base64 encoded)
+
+@dataclass
+class ResourceContents:
+    contents: List[ResourceContent]
 ```
 
 <Tip>
@@ -1539,38 +1543,45 @@ This human-in-the-loop design ensures users maintain control over what the LLM s
 
 Sampling requests use a standardized message format:
 
-```typescript
-{
-  messages: [
-    {
-      role: "user" | "assistant",
-      content: {
-        type: "text" | "image",
+```python
+from typing import Dict, List, Optional, Literal, Union
+from dataclasses import dataclass
 
-        // For text:
-        text?: string,
+@dataclass
+class MessageContent:
+    type: Literal["text", "image"]
+    # For text:
+    text: Optional[str] = None
+    # For images:
+    data: Optional[str] = None             # base64 encoded
+    mimeType: Optional[str] = None
 
-        // For images:
-        data?: string,             // base64 encoded
-        mimeType?: string
-      }
-    }
-  ],
-  modelPreferences?: {
-    hints?: [{
-      name?: string                // Suggested model name/family
-    }],
-    costPriority?: number,         // 0-1, importance of minimizing cost
-    speedPriority?: number,        // 0-1, importance of low latency
-    intelligencePriority?: number  // 0-1, importance of capabilities
-  },
-  systemPrompt?: string,
-  includeContext?: "none" | "thisServer" | "allServers",
-  temperature?: number,
-  maxTokens: number,
-  stopSequences?: string[],
-  metadata?: Record<string, unknown>
-}
+@dataclass
+class Message:
+    role: Literal["user", "assistant"]
+    content: MessageContent
+
+@dataclass
+class ModelHint:
+    name: Optional[str] = None                # Suggested model name/family
+
+@dataclass
+class ModelPreferences:
+    hints: Optional[List[ModelHint]] = None
+    costPriority: Optional[float] = None         # 0-1, importance of minimizing cost
+    speedPriority: Optional[float] = None        # 0-1, importance of low latency
+    intelligencePriority: Optional[float] = None  # 0-1, importance of capabilities
+
+@dataclass
+class SamplingRequest:
+    messages: List[Message]
+    modelPreferences: Optional[ModelPreferences] = None
+    systemPrompt: Optional[str] = None
+    includeContext: Optional[Literal["none", "thisServer", "allServers"]] = None
+    temperature: Optional[float] = None
+    maxTokens: int
+    stopSequences: Optional[List[str]] = None
+    metadata: Optional[Dict[str, any]] = None
 ```
 
 ## Request parameters
@@ -1627,18 +1638,26 @@ Fine-tune the LLM sampling with:
 
 The client returns a completion result:
 
-```typescript
-{
-  model: string,  // Name of the model used
-  stopReason?: "endTurn" | "stopSequence" | "maxTokens" | string,
-  role: "user" | "assistant",
-  content: {
-    type: "text" | "image",
-    text?: string,
-    data?: string,
-    mimeType?: string
-  }
-}
+```python
+from typing import Literal, Union
+
+@dataclass
+class TextContent:
+    type: Literal["text"]
+    text: str
+
+@dataclass 
+class ImageContent:
+    type: Literal["image"]
+    data: str
+    mimeType: str
+
+@dataclass
+class CompletionResult:
+    model: str  # Name of the model used
+    stopReason: Optional[Union[Literal["endTurn", "stopSequence", "maxTokens"], str]]
+    role: Literal["user", "assistant"]
+    content: Union[TextContent, ImageContent]
 ```
 
 ## Example request
@@ -1959,6 +1978,34 @@ Tool errors should be reported within the result object, not as MCP protocol-lev
 Here's an example of proper error handling for tools:
 
 <Tabs>
+  <Tab title="Python">
+    ```python
+    from mcp import types
+
+    try:
+        # Tool operation
+        result = perform_operation()
+        return types.CallToolResult(
+            content=[
+                types.TextContent(
+                    type="text",
+                    text=f"Operation successful: {result}"
+                )
+            ]
+        )
+    except Exception as error:
+        return types.CallToolResult(
+            isError=True,
+            content=[
+                types.TextContent(
+                    type="text", 
+                    text=f"Error: {str(error)}"
+                )
+            ]
+        )
+    ```
+  </Tab>
+
   <Tab title="TypeScript">
     ```typescript
     try {
@@ -1985,19 +2032,7 @@ Here's an example of proper error handling for tools:
     }
     ```
   </Tab>
-
-  <Tab title="Python">
-    ```python
-    try:
-        # Tool operation
-        result = perform_operation()
-        return types.CallToolResult(
-            content=[
-                types.TextContent(
-                    type="text",
-                    text=f"Operation successful: {result}"
-                )
-            ]
+</Tabs>
         )
     except Exception as error:
         return types.CallToolResult(
@@ -2216,37 +2251,19 @@ Transport implementations should handle various error scenarios:
 Example error handling:
 
 <Tabs>
-  <Tab title="TypeScript">
-    ```typescript
-    class ExampleTransport implements Transport {
-      async start() {
-        try {
-          // Connection logic
-        } catch (error) {
-          this.onerror?.(new Error(`Failed to connect: ${error}`));
-          throw error;
-        }
-      }
-
-      async send(message: JSONRPCMessage) {
-        try {
-          // Sending logic
-        } catch (error) {
-          this.onerror?.(new Error(`Failed to send message: ${error}`));
-          throw error;
-        }
-      }
-    }
-    ```
-  </Tab>
-
   <Tab title="Python">
     Note that while MCP Servers are often implemented with asyncio, we recommend
     implementing low-level interfaces like transports with `anyio` for wider compatibility.
 
     ```python
-    @contextmanager
-    async def example_transport(scope: Scope, receive: Receive, send: Send):
+    import anyio
+    import logging
+    from contextlib import asynccontextmanager
+
+    logger = logging.getLogger(__name__)
+
+    @asynccontextmanager
+    async def example_transport(scope, receive, send):
         try:
             # Create streams for bidirectional communication
             read_stream_writer, read_stream = anyio.create_memory_object_stream(0)
@@ -2276,6 +2293,30 @@ Example error handling:
         except Exception as exc:
             logger.error(f"Failed to initialize transport: {exc}")
             raise exc
+    ```
+  </Tab>
+
+  <Tab title="TypeScript">
+    ```typescript
+    class ExampleTransport implements Transport {
+      async start() {
+        try {
+          // Connection logic
+        } catch (error) {
+          this.onerror?.(new Error(`Failed to connect: ${error}`));
+          throw error;
+        }
+      }
+
+      async send(message: JSONRPCMessage) {
+        try {
+          // Sending logic
+        } catch (error) {
+          this.onerror?.(new Error(`Failed to send message: ${error}`));
+          throw error;
+        }
+      }
+    }
     ```
   </Tab>
 </Tabs>
@@ -3906,34 +3947,454 @@ This tutorial will primarily focus on tools.
 
     ## Building your server
 
-    ### Importing packages and setting up the instance
+    <Tabs>
+      <Tab title="Python">
+        ### Setting up your Python project
 
-    Add these to the top of your `src/index.ts`:
+        Create a new directory for your project and set up the environment:
 
-    ```typescript
-    import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
-    import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
-    import { z } from "zod";
+        ```bash
+        # Create a new directory for our project
+        mkdir weather-server-python
+        cd weather-server-python
 
-    const NWS_API_BASE = "https://api.weather.gov";
-    const USER_AGENT = "weather-app/1.0";
+        # Create virtual environment and activate it
+        python -m venv venv
+        source venv/bin/activate  # On Windows: venv\Scripts\activate
 
-    // Create server instance
-    const server = new McpServer({
-      name: "weather",
-      version: "1.0.0",
-      capabilities: {
-        resources: {},
-        tools: {},
-      },
-    });
-    ```
+        # Install dependencies
+        pip install mcp httpx
 
-    ### Helper functions
+        # Create our server file
+        touch weather.py
+        ```
 
-    Next, let's add our helper functions for querying and formatting the data from the National Weather Service API:
+        ### Importing packages and setting up the instance
 
-    ```typescript
+        Add these to the top of your `weather.py`:
+
+        ```python
+        import asyncio
+        import json
+        from typing import Any, Dict, List, Optional
+        import httpx
+        from mcp.server import Server
+        from mcp.server.stdio import stdio_server
+        from mcp import types
+
+        # Constants
+        NWS_API_BASE = "https://api.weather.gov"
+        USER_AGENT = "weather-app/1.0"
+
+        # Create server instance
+        server = Server("weather")
+        ```
+
+        ### Helper functions
+
+        Next, let's add our helper functions for querying and formatting the data from the National Weather Service API:
+
+        ```python
+        # Helper function for making NWS API requests
+        async def make_nws_request(url: str) -> Optional[Dict[str, Any]]:
+            headers = {
+                "User-Agent": USER_AGENT,
+                "Accept": "application/geo+json",
+            }
+
+            try:
+                async with httpx.AsyncClient() as client:
+                    response = await client.get(url, headers=headers)
+                    response.raise_for_status()
+                    return response.json()
+            except Exception as error:
+                print(f"Error making NWS request: {error}")
+                return None
+
+        # Format alert data
+        def format_alert(feature: Dict[str, Any]) -> str:
+            props = feature.get("properties", {})
+            return "\n".join([
+                f"Event: {props.get('event', 'Unknown')}",
+                f"Area: {props.get('areaDesc', 'Unknown')}",
+                f"Severity: {props.get('severity', 'Unknown')}",
+                f"Status: {props.get('status', 'Unknown')}",
+                f"Headline: {props.get('headline', 'No headline')}",
+                "---",
+            ])
+        ```
+
+        ### Implementing tool handlers
+
+        The tool handlers are responsible for actually executing the logic of each tool. Let's add them:
+
+        ```python
+        @server.call_tool()
+        async def get_alerts(arguments: Dict[str, Any]) -> List[types.TextContent]:
+            """Get weather alerts for a state"""
+            state = arguments.get("state", "").upper()
+            
+            if len(state) != 2:
+                return [types.TextContent(
+                    type="text",
+                    text="State must be a two-letter state code (e.g. CA, NY)"
+                )]
+
+            alerts_url = f"{NWS_API_BASE}/alerts?area={state}"
+            alerts_data = await make_nws_request(alerts_url)
+
+            if not alerts_data:
+                return [types.TextContent(
+                    type="text",
+                    text="Failed to retrieve alerts data"
+                )]
+
+            features = alerts_data.get("features", [])
+            if not features:
+                return [types.TextContent(
+                    type="text", 
+                    text=f"No active alerts for {state}"
+                )]
+
+            formatted_alerts = [format_alert(feature) for feature in features]
+            alerts_text = f"Active alerts for {state}:\n\n" + "\n".join(formatted_alerts)
+
+            return [types.TextContent(type="text", text=alerts_text)]
+
+        @server.call_tool()
+        async def get_forecast(arguments: Dict[str, Any]) -> List[types.TextContent]:
+            """Get weather forecast for a location"""
+            try:
+                latitude = float(arguments.get("latitude", 0))
+                longitude = float(arguments.get("longitude", 0))
+            except (ValueError, TypeError):
+                return [types.TextContent(
+                    type="text",
+                    text="Invalid latitude or longitude provided"
+                )]
+
+            # Validate coordinates
+            if not (-90 <= latitude <= 90) or not (-180 <= longitude <= 180):
+                return [types.TextContent(
+                    type="text",
+                    text="Latitude must be between -90 and 90, longitude between -180 and 180"
+                )]
+
+            # Get grid point data
+            points_url = f"{NWS_API_BASE}/points/{latitude:.4f},{longitude:.4f}"
+            points_data = await make_nws_request(points_url)
+
+            if not points_data:
+                return [types.TextContent(
+                    type="text",
+                    text=f"Failed to retrieve grid point data for coordinates: {latitude}, {longitude}. This location may not be supported by the NWS API (only US locations are supported)."
+                )]
+
+            forecast_url = points_data.get("properties", {}).get("forecast")
+            if not forecast_url:
+                return [types.TextContent(
+                    type="text",
+                    text="Failed to get forecast URL from grid point data"
+                )]
+
+            # Get forecast data
+            forecast_data = await make_nws_request(forecast_url)
+            if not forecast_data:
+                return [types.TextContent(
+                    type="text",
+                    text="Failed to retrieve forecast data"
+                )]
+
+            periods = forecast_data.get("properties", {}).get("periods", [])
+            if not periods:
+                return [types.TextContent(
+                    type="text",
+                    text="No forecast periods available"
+                )]
+
+            # Format forecast periods
+            formatted_forecast = []
+            for period in periods:
+                formatted_period = "\n".join([
+                    f"{period.get('name', 'Unknown')}:",
+                    f"Temperature: {period.get('temperature', 'Unknown')}°{period.get('temperatureUnit', 'F')}",
+                    f"Wind: {period.get('windSpeed', 'Unknown')} {period.get('windDirection', '')}",
+                    f"{period.get('shortForecast', 'No forecast available')}",
+                    "---",
+                ])
+                formatted_forecast.append(formatted_period)
+
+            forecast_text = f"Forecast for {latitude}, {longitude}:\n\n" + "\n".join(formatted_forecast)
+
+            return [types.TextContent(type="text", text=forecast_text)]
+        ```
+
+        ### Running the server
+
+        Finally, implement the main function to run the server:
+
+        ```python
+        async def main():
+            async with stdio_server() as streams:
+                await server.run(
+                    streams[0],
+                    streams[1],
+                    server.create_initialization_options()
+                )
+
+        if __name__ == "__main__":
+            print("Weather MCP Server running on stdio", file=sys.stderr)
+            asyncio.run(main())
+        ```
+
+        Your complete `weather.py` file should look like this:
+
+        ```python
+        import asyncio
+        import sys
+        from typing import Any, Dict, List, Optional
+        import httpx
+        from mcp.server import Server
+        from mcp.server.stdio import stdio_server
+        from mcp import types
+
+        # Constants
+        NWS_API_BASE = "https://api.weather.gov"
+        USER_AGENT = "weather-app/1.0"
+
+        # Create server instance
+        server = Server("weather")
+
+        # Helper function for making NWS API requests
+        async def make_nws_request(url: str) -> Optional[Dict[str, Any]]:
+            headers = {
+                "User-Agent": USER_AGENT,
+                "Accept": "application/geo+json",
+            }
+
+            try:
+                async with httpx.AsyncClient() as client:
+                    response = await client.get(url, headers=headers)
+                    response.raise_for_status()
+                    return response.json()
+            except Exception as error:
+                print(f"Error making NWS request: {error}")
+                return None
+
+        # Format alert data
+        def format_alert(feature: Dict[str, Any]) -> str:
+            props = feature.get("properties", {})
+            return "\n".join([
+                f"Event: {props.get('event', 'Unknown')}",
+                f"Area: {props.get('areaDesc', 'Unknown')}",
+                f"Severity: {props.get('severity', 'Unknown')}",
+                f"Status: {props.get('status', 'Unknown')}",
+                f"Headline: {props.get('headline', 'No headline')}",
+                "---",
+            ])
+
+        @server.call_tool()
+        async def get_alerts(arguments: Dict[str, Any]) -> List[types.TextContent]:
+            """Get weather alerts for a state"""
+            state = arguments.get("state", "").upper()
+            
+            if len(state) != 2:
+                return [types.TextContent(
+                    type="text",
+                    text="State must be a two-letter state code (e.g. CA, NY)"
+                )]
+
+            alerts_url = f"{NWS_API_BASE}/alerts?area={state}"
+            alerts_data = await make_nws_request(alerts_url)
+
+            if not alerts_data:
+                return [types.TextContent(
+                    type="text",
+                    text="Failed to retrieve alerts data"
+                )]
+
+            features = alerts_data.get("features", [])
+            if not features:
+                return [types.TextContent(
+                    type="text", 
+                    text=f"No active alerts for {state}"
+                )]
+
+            formatted_alerts = [format_alert(feature) for feature in features]
+            alerts_text = f"Active alerts for {state}:\n\n" + "\n".join(formatted_alerts)
+
+            return [types.TextContent(type="text", text=alerts_text)]
+
+        @server.call_tool()
+        async def get_forecast(arguments: Dict[str, Any]) -> List[types.TextContent]:
+            """Get weather forecast for a location"""
+            try:
+                latitude = float(arguments.get("latitude", 0))
+                longitude = float(arguments.get("longitude", 0))
+            except (ValueError, TypeError):
+                return [types.TextContent(
+                    type="text",
+                    text="Invalid latitude or longitude provided"
+                )]
+
+            # Validate coordinates
+            if not (-90 <= latitude <= 90) or not (-180 <= longitude <= 180):
+                return [types.TextContent(
+                    type="text",
+                    text="Latitude must be between -90 and 90, longitude between -180 and 180"
+                )]
+
+            # Get grid point data
+            points_url = f"{NWS_API_BASE}/points/{latitude:.4f},{longitude:.4f}"
+            points_data = await make_nws_request(points_url)
+
+            if not points_data:
+                return [types.TextContent(
+                    type="text",
+                    text=f"Failed to retrieve grid point data for coordinates: {latitude}, {longitude}. This location may not be supported by the NWS API (only US locations are supported)."
+                )]
+
+            forecast_url = points_data.get("properties", {}).get("forecast")
+            if not forecast_url:
+                return [types.TextContent(
+                    type="text",
+                    text="Failed to get forecast URL from grid point data"
+                )]
+
+            # Get forecast data
+            forecast_data = await make_nws_request(forecast_url)
+            if not forecast_data:
+                return [types.TextContent(
+                    type="text",
+                    text="Failed to retrieve forecast data"
+                )]
+
+            periods = forecast_data.get("properties", {}).get("periods", [])
+            if not periods:
+                return [types.TextContent(
+                    type="text",
+                    text="No forecast periods available"
+                )]
+
+            # Format forecast periods
+            formatted_forecast = []
+            for period in periods:
+                formatted_period = "\n".join([
+                    f"{period.get('name', 'Unknown')}:",
+                    f"Temperature: {period.get('temperature', 'Unknown')}°{period.get('temperatureUnit', 'F')}",
+                    f"Wind: {period.get('windSpeed', 'Unknown')} {period.get('windDirection', '')}",
+                    f"{period.get('shortForecast', 'No forecast available')}",
+                    "---",
+                ])
+                formatted_forecast.append(formatted_period)
+
+            forecast_text = f"Forecast for {latitude}, {longitude}:\n\n" + "\n".join(formatted_forecast)
+
+            return [types.TextContent(type="text", text=forecast_text)]
+
+        async def main():
+            async with stdio_server() as streams:
+                await server.run(
+                    streams[0],
+                    streams[1],
+                    server.create_initialization_options()
+                )
+
+        if __name__ == "__main__":
+            print("Weather MCP Server running on stdio", file=sys.stderr)
+            asyncio.run(main())
+        ```
+      </Tab>
+
+      <Tab title="TypeScript">
+        ### Setting up your TypeScript project
+
+        First, make sure you have Node.js installed. Then create a new directory for your project:
+
+        ```bash
+        # Create a new directory for our project
+        mkdir weather-server-typescript
+        cd weather-server-typescript
+
+        # Initialize a new Node.js project
+        npm init -y
+
+        # Install dependencies
+        npm install @modelcontextprotocol/sdk
+
+        # Install dev dependencies
+        npm install -D typescript @types/node
+
+        # Create src directory and main file
+        mkdir src
+        touch src/index.ts
+        ```
+
+        Update your package.json to add type: "module" and a build script:
+
+        ```json package.json
+        {
+          "type": "module",
+          "bin": {
+            "weather": "./build/index.js"
+          },
+          "scripts": {
+            "build": "tsc && chmod 755 build/index.js"
+          },
+          "files": [
+            "build"
+          ],
+        }
+        ```
+
+        Create a `tsconfig.json` in the root of your project:
+
+        ```json tsconfig.json
+        {
+          "compilerOptions": {
+            "target": "ES2022",
+            "module": "Node16",
+            "moduleResolution": "Node16",
+            "outDir": "./build",
+            "rootDir": "./src",
+            "strict": true,
+            "esModuleInterop": true,
+            "skipLibCheck": true,
+            "forceConsistentCasingInFileNames": true
+          },
+          "include": ["src/**/*"],
+          "exclude": ["node_modules"]
+        }
+        ```
+
+        ### Importing packages and setting up the instance
+
+        Add these to the top of your `src/index.ts`:
+
+        ```typescript
+        import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
+        import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
+        import { z } from "zod";
+
+        const NWS_API_BASE = "https://api.weather.gov";
+        const USER_AGENT = "weather-app/1.0";
+
+        // Create server instance
+        const server = new McpServer({
+          name: "weather",
+          version: "1.0.0",
+          capabilities: {
+            resources: {},
+            tools: {},
+          },
+        });
+        ```
+
+        ### Helper functions
+
+        Next, let's add our helper functions for querying and formatting the data from the National Weather Service API:
+
+        ```typescript
     // Helper function for making NWS API requests
     async function makeNWSRequest<T>(url: string): Promise<T | null> {
       const headers = {
@@ -4146,19 +4607,21 @@ This tutorial will primarily focus on tools.
     Finally, implement the main function to run the server:
 
     ```typescript
-    async function main() {
-      const transport = new StdioServerTransport();
-      await server.connect(transport);
-      console.error("Weather MCP Server running on stdio");
-    }
+        async function main() {
+          const transport = new StdioServerTransport();
+          await server.connect(transport);
+          console.error("Weather MCP Server running on stdio");
+        }
 
-    main().catch((error) => {
-      console.error("Fatal error in main():", error);
-      process.exit(1);
-    });
-    ```
+        main().catch((error) => {
+          console.error("Fatal error in main():", error);
+          process.exit(1);
+        });
+        ```
 
-    Make sure to run `npm run build` to build your server! This is a very important step in getting your server to connect.
+        Make sure to run `npm run build` to build your server! This is a very important step in getting your server to connect.
+      </Tab>
+    </Tabs>
 
     Let's now test your server from an existing MCP host, Claude for Desktop.
 
