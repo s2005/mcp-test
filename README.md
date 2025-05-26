@@ -120,6 +120,62 @@ mcp dev src/server.py
 
 5. Restart Claude Desktop
 
+## Configuration
+
+### Tips Content
+
+The server loads learning tips from a JSON file specified by the `TIPS_JSON_PATH` environment variable.
+
+#### Setting the Environment Variable
+
+**Windows (Command Prompt):**
+
+```cmd
+set TIPS_JSON_PATH=d:\mcp\my.python\mcp-test\tips_categories.json
+```
+
+**Windows (Git Bash):**
+
+```bash
+export TIPS_JSON_PATH="d:/mcp/my.python/mcp-test/tips_categories.json"
+```
+
+**MacOS/Linux (Bash):**
+
+```bash
+export TIPS_JSON_PATH="/path/to/your/tips_categories.json"
+```
+
+#### JSON File Format
+
+The tips JSON file should follow this structure:
+
+```json
+{
+    "category_name": [
+        "Tip 1 for this category",
+        "Tip 2 for this category",
+        "Tip 3 for this category"
+    ],
+    "another_category": [
+        "Another tip",
+        "Yet another tip"
+    ]
+}
+```
+
+If the environment variable is not set or the file cannot be loaded, the server will fall back to default tips for MCP, Python, and Docker categories.
+
+#### Example JSON File
+
+A sample `tips_categories.json` file is included in the project root with default tips for:
+
+- **mcp**: Model Context Protocol development tips
+- **python**: Python programming best practices
+- **docker**: Docker containerization tips
+
+You can modify this file or create your own with additional categories and tips.
+
 ## Running Tests
 
 The project includes a comprehensive test suite to ensure all functionality works correctly:

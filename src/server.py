@@ -1,50 +1,79 @@
 from mcp.server.fastmcp import FastMCP
 import datetime
 import random
+import json
+import os
 from typing import Dict, List, Optional, Any
 
 # Create an MCP server
 mcp = FastMCP("LinkedIn Demo")
 
-# Category-specific tips - single source of truth
-TIPS_BY_CATEGORY = {
-    "mcp": [
-        "Start with simple tools and gradually add complexity",
-        "Use the MCP Inspector to test your servers during development",
-        "Read the official MCP documentation at modelcontextprotocol.io",
-        "Join the MCP community discussions on GitHub",
-        "Practice with both Python and TypeScript implementations",
-        "Test your MCP servers with Claude Desktop for real-world usage",
-        "Use proper error handling in your tool functions",
-        "Document your tools clearly with descriptive docstrings",
-        "Consider security when exposing system resources",
-        "Start with local development before deploying to production"
-    ],
-    "python": [
-        "Use virtual environments to isolate project dependencies",
-        "Follow PEP 8 style guidelines for consistent code formatting",
-        "Write comprehensive docstrings for all functions and classes",
-        "Use type hints to improve code readability and catch errors",
-        "Implement proper exception handling with try-except blocks",
-        "Use list comprehensions for concise and readable code",
-        "Learn and use Python's built-in modules like itertools and collections",
-        "Write unit tests using pytest or unittest framework",
-        "Use logging instead of print statements for debugging",
-        "Follow the DRY (Don't Repeat Yourself) principle"
-    ],
-    "docker": [
-        "Use multi-stage builds to reduce final image size",
-        "Always specify exact versions in your Dockerfile",
-        "Use .dockerignore to exclude unnecessary files",
-        "Run containers as non-root users for security",
-        "Use health checks to monitor container status",
-        "Leverage Docker layer caching for faster builds",
-        "Keep your base images updated and secure",
-        "Use docker-compose for multi-container applications",
-        "Store secrets securely using Docker secrets or environment variables",
-        "Monitor container resource usage and set appropriate limits"
-    ]
-}
+def load_tips_from_json() -> Dict[str, List[str]]:
+    """
+    Load tips from JSON file specified by environment variable.
+    
+    Returns:
+        Dictionary containing tips by category
+    """
+    # Default fallback tips
+    default_tips = {
+        "mcp": [
+            "Start with simple tools and gradually add complexity",
+            "Use the MCP Inspector to test your servers during development",
+            "Read the official MCP documentation at modelcontextprotocol.io"
+        ],
+        "python": [
+            "Use virtual environments to isolate project dependencies",
+            "Follow PEP 8 style guidelines for consistent code formatting",
+            "Write comprehensive docstrings for all functions and classes"
+        ],
+        "docker": [
+            "Use multi-stage builds to reduce final image size",
+            "Always specify exact versions in your Dockerfile",
+            "Use .dockerignore to exclude unnecessary files"
+        ]
+    }
+    
+    # Get JSON file path from environment variable
+    json_file_path = os.getenv('TIPS_JSON_PATH')
+    
+    if not json_file_path:
+        print("Warning: TIPS_JSON_PATH environment variable not set. Using default tips.")
+        return default_tips
+    
+    try:
+        # Check if file exists
+        if not os.path.exists(json_file_path):
+            print(f"Warning: Tips file not found at {json_file_path}. Using default tips.")
+            return default_tips
+        
+        # Load tips from JSON file
+        with open(json_file_path, 'r', encoding='utf-8') as file:
+            tips_data = json.load(file)
+            
+        # Validate that the loaded data is a dictionary
+        if not isinstance(tips_data, dict):
+            print(f"Error: Tips file format invalid. Expected dictionary, got {type(tips_data)}. Using default tips.")
+            return default_tips
+            
+        # Validate that all values are lists
+        for category, tips in tips_data.items():
+            if not isinstance(tips, list):
+                print(f"Error: Category '{category}' should contain a list of tips. Using default tips.")
+                return default_tips
+                
+        print(f"Successfully loaded tips from {json_file_path}")
+        return tips_data
+        
+    except json.JSONDecodeError as e:
+        print(f"Error: Invalid JSON format in {json_file_path}: {e}. Using default tips.")
+        return default_tips
+    except Exception as e:
+        print(f"Error loading tips from {json_file_path}: {e}. Using default tips.")
+        return default_tips
+
+# Load tips from JSON file (single source of truth)
+TIPS_BY_CATEGORY = load_tips_from_json()
 
 @mcp.tool()
 def get_current_time() -> str:
