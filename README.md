@@ -12,6 +12,35 @@ This MCP server provides a collection of simple tools to demonstrate MCP functio
 - Learning tips (multiple categories: MCP, Python, Docker)
 - MCP resources for tips and documentation
 
+## Project Structure
+
+The project follows standard Python packaging conventions with a clean separation between source code and tests:
+
+```text
+mcp-test/
+├── src/                    # Source code directory
+│   ├── __init__.py        # Package initialization
+│   ├── server.py          # Main MCP server implementation
+│   └── client.py          # Simple MCP client for testing
+├── tests/                  # Test directory
+│   ├── __init__.py        # Test package initialization
+│   └── tests.py           # Comprehensive test suite
+├── .github/               # GitHub Actions workflows
+│   └── workflows/
+│       └── test.yml       # CI/CD pipeline configuration
+├── pyproject.toml         # Project configuration and dependencies
+├── README.md              # This file
+├── uv.lock               # Dependency lock file
+└── .gitignore            # Git ignore patterns
+```
+
+### Key Components
+
+- **`src/server.py`**: The main MCP server implementation containing all tools and resources
+- **`src/client.py`**: A simple synchronous MCP client used for testing and development
+- **`tests/tests.py`**: Comprehensive test suite covering all server functionality
+- **`pyproject.toml`**: Project configuration with dependencies, build settings, and test configuration
+
 ## Setup
 
 1. **Install uv** (Python project manager):
@@ -49,7 +78,7 @@ This MCP server provides a collection of simple tools to demonstrate MCP functio
 Test your server using the MCP Inspector:
 
 ```bash
-mcp dev server.py
+mcp dev src/server.py
 ```
 
 ### Install in Claude Desktop
@@ -57,7 +86,7 @@ mcp dev server.py
 1. Install the server:
 
    ```bash
-   mcp install server.py
+   mcp install src/server.py
    ```
 
 2. Find the full path to `uv`:
@@ -84,7 +113,7 @@ mcp dev server.py
            "mcp[cli]",
            "mcp",
            "run",
-           "D:\\mcp\\my.python\\mcp-test\\server.py"
+           "D:\\mcp\\my.python\\mcp-test\\src\\server.py"
          ]
        }
      }
@@ -92,6 +121,28 @@ mcp dev server.py
    ```
 
 5. Restart Claude Desktop
+
+## Running Tests
+
+The project includes a comprehensive test suite to ensure all functionality works correctly:
+
+```bash
+# Run all tests
+python -m pytest tests/ -v
+
+# Run tests with coverage
+python -m pytest tests/ --cov=src --cov-report=html
+
+# Run specific test file
+python -m pytest tests/tests.py -v
+```
+
+The test suite covers:
+
+- All MCP server tools and functionality
+- Error handling and edge cases
+- Client-server communication
+- Resource retrieval
 
 ## Available Tools
 
