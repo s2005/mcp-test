@@ -191,6 +191,49 @@ class SimpleMCPClient:
             print(f"Error reading resource {uri}: {e}")
             return {"error": str(e)}
 
+    def list_prompts(self) -> List[Dict[str, Any]]:
+        """Get list of available prompts"""
+        if not self.initialized:
+            raise RuntimeError("Client not initialized")
+
+        try:
+            response = self._send_request("prompts/list")
+            if "error" in response:
+                print(f"Error listing prompts: {response['error']}")
+                return []
+
+            if "prompts" in response:
+                prompts = response["prompts"]
+                # Ensure we return a List[Dict[str, Any]]
+                if isinstance(prompts, list) and all(
+                    isinstance(prompt, dict) for prompt in prompts
+                ):
+                    return prompts
+            return []
+
+        except Exception as e:
+            print(f"Error listing prompts: {e}")
+            return []
+
+    def get_prompt(
+        self, name: str, arguments: Optional[Dict[str, Any]] = None
+    ) -> Dict[str, Any]:
+        """Get a prompt template with optional arguments"""
+        if not self.initialized:
+            raise RuntimeError("Client not initialized")
+
+        params: Dict[str, Any] = {"name": name}
+        if arguments:
+            params["arguments"] = arguments
+
+        try:
+            response = self._send_request("prompts/get", params)
+            return response
+
+        except Exception as e:
+            print(f"Error getting prompt {name}: {e}")
+            return {"error": str(e)}
+
     def call_tool(
         self, name: str, arguments: Optional[Dict[str, Any]] = None
     ) -> Dict[str, Any]:
@@ -242,7 +285,7 @@ def main() -> None:
     try:
         # Start server
         print("1. Starting MCP server...")
-        if not client.start_server("python", ["server.py"]):
+        if not client.start_server("python", ["src/server.py"]):
             print("❌ Failed to start server")
             return
         print("✅ Server started")
@@ -272,9 +315,18 @@ def main() -> None:
             name = resource.get("name", "No name")
             print(f"   - {uri}: {name}")
 
+        # List available prompts
+        print("5. Listing available prompts...")
+        prompts = client.list_prompts()
+        print(f"✅ Found {len(prompts)} prompts:")
+        for prompt in prompts:
+            name = prompt.get("name", "Unknown")
+            desc = prompt.get("description", "No description")
+            print(f"   - {name}: {desc}")
+
         # Call some tools
         if tools:
-            print("5. Testing tools...")
+            print("6. Testing tools...")
             
             # Test get_current_time
             print("   - Testing get_current_time...")
@@ -292,13 +344,33 @@ def main() -> None:
             else:
                 print(f"     ✅ Greeting: {result}")
 
+        # Test prompts
+        if prompts:
+            print("7. Testing prompts...")
+            
+            # Test code_review_prompt
+            print("   - Testing code_review_prompt...")
+            result = client.get_prompt("code_review_prompt", {"language": "python", "code_type": "function"})
+            if "error" in result:
+                print(f"     ❌ Error: {result['error']}")
+            else:
+                print(f"     ✅ Code review prompt: {len(result.get('messages', []))} messages")
+
+            # Test learning_plan_prompt
+            print("   - Testing learning_plan_prompt...")
+            result = client.get_prompt("learning_plan_prompt", {"topic": "FastAPI", "skill_level": "beginner"})
+            if "error" in result:
+                print(f"     ❌ Error: {result['error']}")
+            else:
+                print(f"     ✅ Learning plan prompt: {len(result.get('messages', []))} messages")
+
         print("\n🎉 Demo completed successfully!")
 
     except Exception as e:
         print(f"❌ Error: {e}")
 
     finally:
-        print("6. Closing client...")
+        print("8. Closing client...")
         client.close()
         print("✅ Client closed")
 
