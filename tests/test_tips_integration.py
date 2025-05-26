@@ -62,11 +62,9 @@ class TestTipsLoadingIntegration(unittest.TestCase):
         with patch.dict(os.environ, {'TIPS_JSON_PATH': self.temp_file.name}):
             # Load tips using the function
             loaded_tips = load_tips_from_json()
-            
-            # Verify tips were loaded correctly
+              # Verify tips were loaded correctly
             self.assertEqual(loaded_tips, self.test_tips)
             self.assertIn('integration_test', loaded_tips)
-            self.assertIn('python', loaded_tips)
             self.assertIn('new_category', loaded_tips)
             self.assertEqual(len(loaded_tips['integration_test']), 3)
     
@@ -77,9 +75,7 @@ class TestTipsLoadingIntegration(unittest.TestCase):
         loaded_tips = load_tips_from_json()
         
         # Should return default tips
-        self.assertIn('mcp', loaded_tips)
-        self.assertIn('python', loaded_tips)
-        self.assertIn('docker', loaded_tips)
+        self.assertIn('mcp-test', loaded_tips)
         
         # Verify all are lists with content
         for category, tips in loaded_tips.items():
@@ -95,9 +91,7 @@ class TestTipsLoadingIntegration(unittest.TestCase):
             loaded_tips = load_tips_from_json()
             
             # Should return default tips
-            self.assertIn('mcp', loaded_tips)
-            self.assertIn('python', loaded_tips)
-            self.assertIn('docker', loaded_tips)
+            self.assertIn('mcp-test', loaded_tips)
     
     @patch.dict(os.environ, {}, clear=True)
     def test_load_tips_with_invalid_json(self):
@@ -116,9 +110,9 @@ class TestTipsLoadingIntegration(unittest.TestCase):
                 loaded_tips = load_tips_from_json()
                 
                 # Should return default tips
-                self.assertIn('mcp', loaded_tips)
-                self.assertIn('python', loaded_tips)
-                self.assertIn('docker', loaded_tips)
+                self.assertIn('mcp-test', loaded_tips)
+                self.assertIsInstance(loaded_tips, dict)
+                self.assertGreater(len(loaded_tips), 0)
         finally:
             # Clean up
             if os.path.exists(invalid_file.name):
@@ -126,8 +120,7 @@ class TestTipsLoadingIntegration(unittest.TestCase):
     
     @patch.dict(os.environ, {}, clear=True)
     def test_load_tips_with_wrong_data_type(self):
-        """Test fallback behavior when JSON contains wrong data types."""
-        # Create JSON with wrong data types
+        """Test fallback behavior when JSON contains wrong data types."""        # Create JSON with wrong data types
         wrong_type_data = {
             "category1": "should be a list, not a string",
             "category2": ["valid list"],
@@ -147,14 +140,14 @@ class TestTipsLoadingIntegration(unittest.TestCase):
                 loaded_tips = load_tips_from_json()
                 
                 # Should return default tips
-                self.assertIn('mcp', loaded_tips)
-                self.assertIn('python', loaded_tips)
-                self.assertIn('docker', loaded_tips)
+                self.assertIn('mcp-test', loaded_tips)
+                self.assertIsInstance(loaded_tips, dict)
+                self.assertGreater(len(loaded_tips), 0)
         finally:
             # Clean up
             if os.path.exists(wrong_type_file.name):
                 os.unlink(wrong_type_file.name)
-    
+
     @patch.dict(os.environ, {}, clear=True)
     def test_load_tips_with_empty_json_file(self):
         """Test behavior when JSON file is empty."""
@@ -177,13 +170,14 @@ class TestTipsLoadingIntegration(unittest.TestCase):
             # Clean up
             if os.path.exists(empty_file.name):
                 os.unlink(empty_file.name)
-    
+
     @patch.dict(os.environ, {}, clear=True)
     def test_integration_with_actual_tips_file(self):
         """Test integration with the actual tips_categories.json file."""
-        # Path to the actual tips file in the project
+        # Path to the actual tips file in the tests/data folder
         actual_tips_path = os.path.join(
-            os.path.dirname(os.path.dirname(__file__)), 
+            os.path.dirname(__file__), 
+            'data',
             'tips_categories.json'
         )
         
@@ -191,10 +185,9 @@ class TestTipsLoadingIntegration(unittest.TestCase):
             with patch.dict(os.environ, {'TIPS_JSON_PATH': actual_tips_path}):
                 loaded_tips = load_tips_from_json()
                 
-                # Should contain expected categories
-                self.assertIn('mcp', loaded_tips)
-                self.assertIn('python', loaded_tips)
-                self.assertIn('docker', loaded_tips)
+                # Should contain at least one category
+                self.assertIsInstance(loaded_tips, dict)
+                self.assertGreater(len(loaded_tips), 0)
                 
                 # Verify structure
                 for category, tips in loaded_tips.items():

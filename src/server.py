@@ -14,23 +14,15 @@ def load_tips_from_json() -> Dict[str, List[str]]:
     
     Returns:
         Dictionary containing tips by category
-    """
-    # Default fallback tips
+    """    # Default fallback tips
     default_tips = {
-        "mcp": [
-            "Start with simple tools and gradually add complexity",
-            "Use the MCP Inspector to test your servers during development",
-            "Read the official MCP documentation at modelcontextprotocol.io"
-        ],
-        "python": [
-            "Use virtual environments to isolate project dependencies",
-            "Follow PEP 8 style guidelines for consistent code formatting",
-            "Write comprehensive docstrings for all functions and classes"
-        ],
-        "docker": [
-            "Use multi-stage builds to reduce final image size",
-            "Always specify exact versions in your Dockerfile",
-            "Use .dockerignore to exclude unnecessary files"
+        "mcp-test": [
+            "Configure this server by adding it to your MCP client configuration file",
+            "Set the TIPS_JSON_PATH environment variable to load custom tips from a JSON file",
+            "Use 'uv run src/server.py' to start the server in development mode",
+            "Test the server tools using get_current_time, generate_greeting, and get_tips functions",
+            "The server provides tips categorized by technology - add more categories as needed",
+            "Extend functionality by adding new @mcp.tool() decorated functions to the server"
         ]
     }
     
@@ -143,16 +135,15 @@ def calculate_days_until_date(target_date: str) -> Dict[str, Any]:
             "error": "Invalid date format. Please use YYYY-MM-DD format (e.g., 2024-12-25)"
         }
 
-@mcp.resource("tips://mcp")
+@mcp.resource("tips://mcp-test")
 def get_learning_tips_resource() -> str:
     """
     Get a list of learning tips for MCP development.
     
     Returns:
         Learning tips formatted as a string
-    """
-    # Use MCP tips from TIPS_BY_CATEGORY as default
-    tips = TIPS_BY_CATEGORY["mcp"]
+    """    # Use MCP tips from TIPS_BY_CATEGORY as default
+    tips = TIPS_BY_CATEGORY["mcp-test"]
     
     # Format as a readable string resource
     formatted_tips = "MCP Development Learning Tips:\n\n"
@@ -165,17 +156,15 @@ def get_learning_tips_resource() -> str:
 def get_learning_tips(category: Optional[str] = None) -> List[str]:
     """
     Get a list of learning tips for development.
-    
-    Args:
-        category: Optional category to filter tips (mcp, python, docker). 
-                 If not provided, returns MCP tips.
+      Args:
+        category: Optional category to filter tips.                 If not provided, returns MCP-test tips.
     
     Returns:
         List of helpful tips for learning
     """
     if category is None:
-        # Default behavior - return MCP tips from TIPS_BY_CATEGORY
-        return TIPS_BY_CATEGORY["mcp"].copy()
+        # Default behavior - return MCP-test tips from TIPS_BY_CATEGORY
+        return TIPS_BY_CATEGORY["mcp-test"].copy()
     
     # Convert category to lowercase for case-insensitive matching
     category_lower = category.lower()
