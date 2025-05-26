@@ -22,9 +22,9 @@ class TestTipsJSONLoading:
         """Test loading tips from a valid JSON file"""
         # Create test data
         test_tips = {
-            "python": ["Tip 1", "Tip 2", "Tip 3"],
-            "docker": ["Docker tip 1", "Docker tip 2"],
-            "mcp": ["MCP tip 1"]
+            "category1": ["Tip 1", "Tip 2", "Tip 3"],
+            "category2": ["Docker tip 1", "Docker tip 2"],
+            "mcp-test": ["MCP tip 1"]
         }
         
         # Create a temporary JSON file
@@ -39,11 +39,9 @@ class TestTipsJSONLoading:
                 
             # Verify the result matches our test data
             assert result == test_tips
-            assert "python" in result
-            assert "docker" in result
-            assert "mcp" in result
-            assert len(result["python"]) == 3
-            assert result["python"][0] == "Tip 1"
+            assert "mcp-test" in result
+            assert len(result["category1"]) == 3
+            assert result["category1"][0] == "Tip 1"
             
         finally:
             # Clean up temporary file
@@ -57,11 +55,9 @@ class TestTipsJSONLoading:
             
         # Should return default tips
         assert isinstance(result, dict)
-        assert "mcp" in result
-        assert "python" in result
-        assert "docker" in result
-        assert isinstance(result["mcp"], list)
-        assert len(result["mcp"]) >= 1  # Should have at least one default tip
+        assert "mcp-test" in result
+        assert isinstance(result["mcp-test"], list)
+        assert len(result["mcp-test"]) >= 1  # Should have at least one default tip
 
     def test_load_tips_file_not_found(self):
         """Test behavior when JSON file doesn't exist"""
@@ -72,9 +68,7 @@ class TestTipsJSONLoading:
             
         # Should return default tips
         assert isinstance(result, dict)
-        assert "mcp" in result
-        assert "python" in result
-        assert "docker" in result
+        assert "mcp-test" in result
 
     def test_load_tips_invalid_json_format(self):
         """Test behavior when JSON file contains invalid JSON"""
@@ -89,9 +83,7 @@ class TestTipsJSONLoading:
                 
             # Should return default tips due to JSON error
             assert isinstance(result, dict)
-            assert "mcp" in result
-            assert "python" in result
-            assert "docker" in result
+            assert "mcp-test" in result
             
         finally:
             os.unlink(temp_file_path)
@@ -111,9 +103,7 @@ class TestTipsJSONLoading:
                 
             # Should return default tips due to format error
             assert isinstance(result, dict)
-            assert "mcp" in result
-            assert "python" in result
-            assert "docker" in result
+            assert "mcp-test" in result
             
         finally:
             os.unlink(temp_file_path)
@@ -122,9 +112,9 @@ class TestTipsJSONLoading:
         """Test behavior when JSON contains categories with non-list values"""
         # Create test data with invalid category format
         test_tips = {
-            "python": ["Valid tip 1", "Valid tip 2"],
-            "docker": "This should be a list, not a string",  # Invalid format
-            "mcp": ["Valid MCP tip"]
+            "category1": ["Valid tip 1", "Valid tip 2"],
+            "category2": "This should be a list, not a string",  # Invalid format
+            "mcp-test": ["Valid MCP tip"]
         }
         
         with tempfile.NamedTemporaryFile(mode='w', suffix='.json', delete=False) as temp_file:
@@ -137,9 +127,7 @@ class TestTipsJSONLoading:
                 
             # Should return default tips due to validation error
             assert isinstance(result, dict)
-            assert "mcp" in result
-            assert "python" in result
-            assert "docker" in result
+            assert "mcp-test" in result
             
         finally:
             os.unlink(temp_file_path)
@@ -156,9 +144,7 @@ class TestTipsJSONLoading:
                 
             # Should return default tips due to JSON error
             assert isinstance(result, dict)
-            assert "mcp" in result
-            assert "python" in result
-            assert "docker" in result
+            assert "mcp-test" in result
             
         finally:
             os.unlink(temp_file_path)
@@ -178,9 +164,7 @@ class TestTipsJSONLoading:
                     
             # Should return default tips due to permission error
             assert isinstance(result, dict)
-            assert "mcp" in result
-            assert "python" in result
-            assert "docker" in result
+            assert "mcp-test" in result
             
         finally:
             os.unlink(temp_file_path)
@@ -189,9 +173,9 @@ class TestTipsJSONLoading:
         """Test loading tips with Unicode characters"""
         # Create test data with Unicode characters
         test_tips = {
-            "python": ["Use 🐍 Python's built-in functions", "Follow PEP 8 📝 guidelines"],
-            "docker": ["Use multi-stage builds 🏗️", "Keep images small 📦"],
-            "mcp": ["Model Context Protocol 🤖 tips"]
+            "category1": ["Use 🐍 Python's built-in functions", "Follow PEP 8 📝 guidelines"],
+            "category2": ["Use multi-stage builds 🏗️", "Keep images small 📦"],
+            "mcp-test": ["Model Context Protocol 🤖 tips"]
         }
         
         with tempfile.NamedTemporaryFile(mode='w', suffix='.json', delete=False, encoding='utf-8') as temp_file:
@@ -204,9 +188,9 @@ class TestTipsJSONLoading:
                 
             # Verify Unicode content is preserved
             assert result == test_tips
-            assert "🐍" in result["python"][0]
-            assert "🏗️" in result["docker"][0]
-            assert "🤖" in result["mcp"][0]
+            assert "🐍" in result["category1"][0]
+            assert "🏗️" in result["category2"][0]
+            assert "🤖" in result["mcp-test"][0]
             
         finally:
             os.unlink(temp_file_path)

@@ -131,13 +131,13 @@ The server loads learning tips from a JSON file specified by the `TIPS_JSON_PATH
 **Windows (Command Prompt):**
 
 ```cmd
-set TIPS_JSON_PATH=d:\mcp\my.python\mcp-test\tips_categories.json
+set TIPS_JSON_PATH=d:\mcp\my.python\mcp-test\tests\data\tips_categories.json
 ```
 
 **Windows (Git Bash):**
 
 ```bash
-export TIPS_JSON_PATH="d:/mcp/my.python/mcp-test/tips_categories.json"
+export TIPS_JSON_PATH="d:/mcp/my.python/mcp-test/tests/data/tips_categories.json"
 ```
 
 **MacOS/Linux (Bash):**
@@ -168,7 +168,7 @@ If the environment variable is not set or the file cannot be loaded, the server 
 
 #### Example JSON File
 
-A sample `tips_categories.json` file is included in the project root with default tips for:
+A sample `tips_categories.json` file is included in the `tests/data` folder with default tips for:
 
 - **mcp**: Model Context Protocol development tips
 - **python**: Python programming best practices
