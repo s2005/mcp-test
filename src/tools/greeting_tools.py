@@ -1,7 +1,16 @@
 import random
+from typing import TYPE_CHECKING
 
-def register_greeting_tools(mcp):
-    """Register greeting-related tools with the MCP server."""
+if TYPE_CHECKING:
+    from src.content.content_manager import ContentManager
+
+def register_greeting_tools(mcp, content_manager: "ContentManager"):
+    """Register greeting-related tools with the MCP server.
+    
+    Args:
+        mcp: The MCP server instance
+        content_manager: ContentManager instance for accessing externalized content
+    """
     
     @mcp.tool()
     def generate_greeting(name: str = "User") -> str:
@@ -14,10 +23,13 @@ def register_greeting_tools(mcp):
         Returns:
             A personalized greeting message
         """
-        greetings = [
-            f"Hello {name}! Welcome to the MCP test server!",
-            f"Hi there, {name}! Great to see you using MCP!",
-            f"Greetings {name}! Hope you're having a fantastic day!",
-            f"Hey {name}! Ready to explore Model Context Protocol?"
-        ]
-        return random.choice(greetings)
+        # Get greeting templates from ContentManager
+        greeting_templates = content_manager.get_greetings()
+        
+        if not greeting_templates:
+            # Fallback in case no greetings are configured
+            return f"Hello {name}! Welcome to the MCP test server!"
+        
+        # Format each template with the provided name and select one randomly
+        formatted_greetings = [template.format(name=name) for template in greeting_templates]
+        return random.choice(formatted_greetings)

@@ -1,4 +1,12 @@
 {
+    "messages": {
+        "greetings": [
+            "Hello {name}! Welcome to the MCP test server!",
+            "Hi there, {name}! Great to see you using MCP!",
+            "Greetings {name}! Hope you're having a fantastic day!",
+            "Hey {name}! Ready to explore Model Context Protocol?"
+        ]
+    },
     "tips": {
         "mcp": [
             "Start with simple tools and gradually add complexity",
