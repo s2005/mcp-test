@@ -50,7 +50,7 @@ class JSONPromptLoader:
     
     def create_prompt_function(self, prompt_name: str, prompt_def: Dict[str, Any]) -> Callable:
         """
-        Create MCP prompt function from JSON definition.
+        Create MCP prompt function from JSON definition - simplified processing.
         
         Args:
             prompt_name: Name of the prompt
@@ -72,20 +72,11 @@ class JSONPromptLoader:
             # Validate and process arguments
             processed_args = self.validator.validate_arguments(arg_definitions, kwargs)
             
-            # Handle special processing for certain prompts
-            if "mcp_development_prompt" in prompt_name:
-                processed_args = self._process_mcp_development_args(processed_args)
-            elif "debugging_assistant_prompt" in prompt_name:
-                processed_args = self._process_debugging_args(processed_args)
-            
-            # Format template with processed arguments
+            # Simple template formatting without special processing
             template = prompt_def["template"]
             try:
-                # Pre-process template to handle method calls like .upper()
-                preprocessed_template = self._preprocess_template(template, processed_args)
-                formatted_content = preprocessed_template.format(**processed_args)
+                formatted_content = template.format(**processed_args)
             except KeyError as e:
-                # Handle missing placeholders gracefully
                 formatted_content = template
                 print(f"Warning: Missing placeholder in template: {e}")
             
@@ -108,99 +99,6 @@ class JSONPromptLoader:
         
         return prompt_function
     
-    def _prepare_template_args(self, args: Dict[str, Any]) -> Dict[str, Any]:
-        """
-        Prepare template arguments by adding variations with method calls.
-        
-        This handles template expressions like {variable.upper()} by creating
-        additional keys with the method applied.
-        
-        Args:
-            args: Original arguments dictionary
-            
-        Returns:
-            Enhanced arguments dictionary with method variations
-        """
-        import re
-        enhanced_args = args.copy()
-        
-        # For each string argument, add common method variations
-        for key, value in args.items():
-            if isinstance(value, str):
-                # Create keys for method calls that can be used in templates
-                enhanced_args[f"{key}.upper()"] = value.upper()
-                enhanced_args[f"{key}.lower()"] = value.lower()
-                enhanced_args[f"{key}.title()"] = value.title()
-                enhanced_args[f"{key}.capitalize()"] = value.capitalize()
-        
-        return enhanced_args
-    
-    def _preprocess_template(self, template: str, args: Dict[str, Any]) -> str:
-        """
-        Preprocess template to handle method calls like {variable.upper()}.
-        
-        Args:
-            template: Template string with potential method calls
-            args: Arguments dictionary
-            
-        Returns:
-            Preprocessed template string
-        """
-        import re
-        
-        # Find all method call patterns like {variable.method()}
-        method_pattern = r'\{(\w+)\.(\w+)\(\)\}'
-        
-        def replace_method_call(match):
-            var_name = match.group(1)
-            method_name = match.group(2)
-            
-            if var_name in args and isinstance(args[var_name], str):
-                value = args[var_name]
-                if method_name == 'upper':
-                    return value.upper()
-                elif method_name == 'lower':
-                    return value.lower()
-                elif method_name == 'title':
-                    return value.title()
-                elif method_name == 'capitalize':
-                    return value.capitalize()
-            
-            # If we can't resolve it, return the original
-            return match.group(0)
-        
-        # Replace all method calls in the template
-        return re.sub(method_pattern, replace_method_call, template)
-    
-    def _process_mcp_development_args(self, args: Dict[str, Any]) -> Dict[str, Any]:
-        """Process arguments specific to MCP development prompt."""
-        component_type = args.get("component_type", "tool")
-        
-        # Component guidance mapping
-        component_guidance = {
-            "tool": "functions that can be called by the LLM to perform actions",
-            "resource": "static or dynamic content that can be accessed by the LLM", 
-            "prompt": "template messages that help structure LLM interactions",
-            "server": "complete MCP server with multiple tools, resources, and prompts"
-        }
-        
-        args["component_guidance"] = component_guidance.get(component_type, "MCP components")
-        return args
-    
-    def _process_debugging_args(self, args: Dict[str, Any]) -> Dict[str, Any]:
-        """Process arguments specific to debugging assistant prompt."""
-        error_type = args.get("error_type", "runtime")
-        
-        # Debugging steps mapping
-        debugging_steps = {
-            "runtime": "stack trace analysis, variable inspection, and runtime state examination",
-            "syntax": "code parsing, syntax validation, and formatting issues",
-            "logic": "algorithm review, test case analysis, and expected vs actual behavior",
-            "performance": "profiling, bottleneck identification, and optimization opportunities"
-        }
-        
-        args["debugging_steps"] = debugging_steps.get(error_type, "general debugging methodology")
-        return args
     
     def get_prompt_names(self) -> List[str]:
         """

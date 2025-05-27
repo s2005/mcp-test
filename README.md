@@ -16,7 +16,7 @@ The project follows standard Python packaging conventions with a clean separatio
 
 ```text
 mcp-test/
-├── src/                    # Source code directory
+├── src/                   # Source code directory
 │   ├── __init__.py        # Package initialization
 │   ├── server.py          # Main MCP server entry point (~70 lines)
 │   ├── client.py          # Simple MCP client for testing
@@ -35,17 +35,17 @@ mcp-test/
 │       ├── learning_prompts.py    # Learning plans, debugging
 │       └── planning_prompts.py    # Project planning
 ├── tests/                  # Test directory
-│   ├── __init__.py        # Test package initialization
-│   └── tests.py           # Comprehensive test suite
+│   ├── __init__.py         # Test package initialization
+│   └── tests.py            # Comprehensive test suite
 ├── docs/                   # Documentation
 │   └── refactoring_plan.md # Detailed refactoring documentation
-├── .github/               # GitHub Actions workflows
+├── .github/                # GitHub Actions workflows
 │   └── workflows/
-│       └── test.yml       # CI/CD pipeline configuration
-├── pyproject.toml         # Project configuration and dependencies
-├── README.md              # This file
-├── uv.lock               # Dependency lock file
-└── .gitignore            # Git ignore patterns
+│       └── test.yml        # CI/CD pipeline configuration
+├── pyproject.toml          # Project configuration and dependencies
+├── README.md               # This file
+├── uv.lock                 # Dependency lock file
+└── .gitignore              # Git ignore patterns
 ```
 
 ### Key Components

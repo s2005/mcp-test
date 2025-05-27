@@ -17,6 +17,33 @@
                 }
             }
         },
+        "messages": {
+            "type": "object",
+            "description": "Message templates organized by category",
+            "properties": {
+                "greetings": {
+                    "type": "array",
+                    "description": "Greeting message templates with {name} placeholder support",
+                    "items": {
+                        "type": "string",
+                        "minLength": 1,
+                        "pattern": ".*\\{name\\}.*"
+                    },
+                    "minItems": 1
+                }
+            },
+            "patternProperties": {
+                "^[a-zA-Z_][a-zA-Z0-9_]*$": {
+                    "type": "array",
+                    "description": "Custom message category",
+                    "items": {
+                        "type": "string",
+                        "minLength": 1
+                    }
+                }
+            },
+            "additionalProperties": false
+        },
         "prompts": {
             "type": "object",
             "description": "Prompt templates organized by category",

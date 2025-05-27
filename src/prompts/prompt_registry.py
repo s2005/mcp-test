@@ -76,7 +76,6 @@ class PromptRegistry:
             for arg in arguments:
                 arg_name = arg["name"]
                 arg_type = arg.get("type", "string")
-                default_value = arg.get("default")
                 
                 # Map JSON types to Python types
                 if arg_type == "string":

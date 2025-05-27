@@ -3,10 +3,8 @@ Content validation utilities for JSON-based configuration.
 """
 
 import json
-import os
 from pathlib import Path
 from typing import Dict, Any, Optional
-import jsonschema
 from jsonschema import validate, ValidationError
 
 
