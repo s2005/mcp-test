@@ -6,7 +6,7 @@ Simple MCP client without asyncio
 import json
 import subprocess
 import time
-from typing import Dict, Any, Optional, List
+from typing import Any, Dict, List, Optional
 
 
 class SimpleMCPClient:
@@ -327,7 +327,7 @@ def main() -> None:
         # Call some tools
         if tools:
             print("6. Testing tools...")
-            
+
             # Test get_current_time
             print("   - Testing get_current_time...")
             result = client.call_tool("get_current_time")
@@ -347,22 +347,30 @@ def main() -> None:
         # Test prompts
         if prompts:
             print("7. Testing prompts...")
-            
+
             # Test code_review_prompt
             print("   - Testing code_review_prompt...")
-            result = client.get_prompt("code_review_prompt", {"language": "python", "code_type": "function"})
+            result = client.get_prompt(
+                "code_review_prompt", {"language": "python", "code_type": "function"}
+            )
             if "error" in result:
                 print(f"     ❌ Error: {result['error']}")
             else:
-                print(f"     ✅ Code review prompt: {len(result.get('messages', []))} messages")
+                print(
+                    f"     ✅ Code review prompt: {len(result.get('messages', []))} messages"
+                )
 
             # Test learning_plan_prompt
             print("   - Testing learning_plan_prompt...")
-            result = client.get_prompt("learning_plan_prompt", {"topic": "FastAPI", "skill_level": "beginner"})
+            result = client.get_prompt(
+                "learning_plan_prompt", {"topic": "FastAPI", "skill_level": "beginner"}
+            )
             if "error" in result:
                 print(f"     ❌ Error: {result['error']}")
             else:
-                print(f"     ✅ Learning plan prompt: {len(result.get('messages', []))} messages")
+                print(
+                    f"     ✅ Learning plan prompt: {len(result.get('messages', []))} messages"
+                )
 
         print("\n🎉 Demo completed successfully!")
 
