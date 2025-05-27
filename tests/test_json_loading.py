@@ -17,7 +17,7 @@ from src.server import load_tips_from_json
 
 class TestTipsJSONLoading:
     """Test class for tips JSON loading functionality"""
-
+    
     def test_load_tips_with_valid_json_file(self):
         """Test loading tips from a valid JSON file"""
         # Create test data
@@ -33,7 +33,35 @@ class TestTipsJSONLoading:
             temp_file_path = temp_file.name
         
         try:
-            # Set environment variable to point to temp file
+            # Test with direct path parameter (new functionality)
+            result = load_tips_from_json(temp_file_path)
+                
+            # Verify the result matches our test data
+            assert result == test_tips
+            assert "mcp-test" in result
+            assert len(result["category1"]) == 3
+            assert result["category1"][0] == "Tip 1"
+            
+        finally:
+            # Clean up temporary file
+            os.unlink(temp_file_path)
+
+    def test_load_tips_with_valid_json_file_env_var(self):
+        """Test loading tips from a valid JSON file using environment variable"""
+        # Create test data
+        test_tips = {
+            "category1": ["Tip 1", "Tip 2", "Tip 3"],
+            "category2": ["Docker tip 1", "Docker tip 2"],
+            "mcp-test": ["MCP tip 1"]
+        }
+        
+        # Create a temporary JSON file
+        with tempfile.NamedTemporaryFile(mode='w', suffix='.json', delete=False) as temp_file:
+            json.dump(test_tips, temp_file)
+            temp_file_path = temp_file.name
+        
+        try:
+            # Test with environment variable (original functionality)
             with patch.dict(os.environ, {'TIPS_JSON_PATH': temp_file_path}):
                 result = load_tips_from_json()
                 
@@ -47,6 +75,34 @@ class TestTipsJSONLoading:
             # Clean up temporary file
             os.unlink(temp_file_path)
 
+    def test_load_tips_path_parameter_takes_precedence(self):
+        """Test that path parameter takes precedence over environment variable"""
+        # Create two different test files
+        env_tips = {"env": ["Environment tip"]}
+        param_tips = {"param": ["Parameter tip"]}
+        
+        with tempfile.NamedTemporaryFile(mode='w', suffix='.json', delete=False) as env_file:
+            json.dump(env_tips, env_file)
+            env_file_path = env_file.name
+            
+        with tempfile.NamedTemporaryFile(mode='w', suffix='.json', delete=False) as param_file:
+            json.dump(param_tips, param_file)
+            param_file_path = param_file.name
+        
+        try:
+            # Set environment variable but also provide path parameter
+            with patch.dict(os.environ, {'TIPS_JSON_PATH': env_file_path}):
+                result = load_tips_from_json(param_file_path)
+                
+            # Should use the parameter file, not the environment file
+            assert result == param_tips
+            assert "param" in result
+            assert "env" not in result
+            
+        finally:
+            os.unlink(env_file_path)
+            os.unlink(param_file_path)
+
     def test_load_tips_no_environment_variable(self):
         """Test fallback behavior when TIPS_JSON_PATH is not set"""
         # Ensure environment variable is not set
@@ -57,16 +113,24 @@ class TestTipsJSONLoading:
         assert isinstance(result, dict)
         assert "mcp-test" in result
         assert isinstance(result["mcp-test"], list)
-        assert len(result["mcp-test"]) >= 1  # Should have at least one default tip
-
-    def test_load_tips_file_not_found(self):
+        assert len(result["mcp-test"]) >= 1  # Should have at least one default tip    def test_load_tips_file_not_found(self):
         """Test behavior when JSON file doesn't exist"""
+        non_existent_path = "/path/that/does/not/exist/tips.json"
+        
+        # Test with direct path parameter
+        result = load_tips_from_json(non_existent_path)
+        
+        # Should return default tips
+        assert isinstance(result, dict)
+        assert "mcp-test" in result
+
+    def test_load_tips_file_not_found_env_var(self):
+        """Test behavior when JSON file doesn't exist (using env var)"""
         non_existent_path = "/path/that/does/not/exist/tips.json"
         
         with patch.dict(os.environ, {'TIPS_JSON_PATH': non_existent_path}):
             result = load_tips_from_json()
-            
-        # Should return default tips
+              # Should return default tips
         assert isinstance(result, dict)
         assert "mcp-test" in result
 
@@ -78,8 +142,8 @@ class TestTipsJSONLoading:
             temp_file_path = temp_file.name
         
         try:
-            with patch.dict(os.environ, {'TIPS_JSON_PATH': temp_file_path}):
-                result = load_tips_from_json()
+            # Test with direct path parameter
+            result = load_tips_from_json(temp_file_path)
                 
             # Should return default tips due to JSON error
             assert isinstance(result, dict)
@@ -98,8 +162,8 @@ class TestTipsJSONLoading:
             temp_file_path = temp_file.name
         
         try:
-            with patch.dict(os.environ, {'TIPS_JSON_PATH': temp_file_path}):
-                result = load_tips_from_json()
+            # Test with direct path parameter
+            result = load_tips_from_json(temp_file_path)
                 
             # Should return default tips due to format error
             assert isinstance(result, dict)
@@ -194,6 +258,27 @@ class TestTipsJSONLoading:
             
         finally:
             os.unlink(temp_file_path)
+
+    def test_load_tips_with_test_data_file(self):
+        """Test loading tips from the existing test data file"""
+        test_data_path = "tests/data/tips_categories.json"
+        
+        # Test with direct path parameter
+        result = load_tips_from_json(test_data_path)
+        
+        # Verify we got the expected categories from the test file
+        assert isinstance(result, dict)
+        assert "mcp" in result
+        assert "python" in result 
+        assert "docker" in result
+        assert len(result["mcp"]) > 0
+        assert len(result["python"]) > 0
+        assert len(result["docker"]) > 0
+        
+        # Verify some expected content
+        assert isinstance(result["mcp"], list)
+        assert isinstance(result["python"], list)
+        assert isinstance(result["docker"], list)
 
 
 if __name__ == "__main__":

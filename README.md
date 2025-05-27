@@ -1,10 +1,10 @@
-# Demo MCP Server
+# Test MCP Server
 
 A test Model Context Protocol (MCP) server created for demonstration purposes, based on Morten Rand-Hendriksen's LinkedIn Learning course "Model Context Protocol (MCP): Hands-On with Agentic AI".
 
 ## Overview
 
-This MCP server provides a collection of tools, resources, and prompts to demonstrate comprehensive MCP functionality including:
+This MCP server provides a collection of tools, resources, and prompts to test MCP functionality including:
 
 - **Tools**: Time and date utilities, greeting generation, date calculations, and learning tips
 - **Resources**: MCP development tips and documentation (multiple categories: MCP, Python, Docker)
@@ -76,7 +76,26 @@ mcp-test/
 Test your server using the MCP Inspector:
 
 ```bash
+# Basic usage
 mcp dev src/server.py
+
+# With custom tips file using command-line argument
+mcp dev src/server.py -- --json-file tests/data/tips_categories.json
+```
+
+### Direct Execution
+
+You can also run the server directly with Python:
+
+```bash
+# Basic usage (uses environment variable if set)
+python src/server.py
+
+# With custom tips file
+python src/server.py --json-file tests/data/tips_categories.json
+
+# Using short form argument
+python src/server.py -j /path/to/your/custom_tips.json
 ```
 
 ### Install in Claude Desktop
@@ -124,9 +143,36 @@ mcp dev src/server.py
 
 ### Tips Content
 
-The server loads learning tips from a JSON file specified by the `TIPS_JSON_PATH` environment variable.
+The server loads learning tips from a JSON file that can be specified in two ways:
+
+1. **Command-line argument** (takes precedence)
+2. **Environment variable** (fallback option)
+
+#### Command-Line Arguments
+
+You can specify the JSON file path directly when starting the server using command-line arguments:
+
+**Short form:**
+
+```bash
+python src/server.py -j /path/to/your/tips_categories.json
+```
+
+**Long form:**
+
+```bash
+python src/server.py --json-file /path/to/your/tips_categories.json
+```
+
+**Help:**
+
+```bash
+python src/server.py --help
+```
 
 #### Setting the Environment Variable
+
+If no command-line argument is provided, the server will fall back to using the `TIPS_JSON_PATH` environment variable.
 
 **Windows (Command Prompt):**
 
@@ -165,6 +211,8 @@ The tips JSON file should follow this structure:
 ```
 
 If the environment variable is not set or the file cannot be loaded, the server will fall back to default tips for MCP, Python, and Docker categories.
+
+**Important:** Command-line arguments always take precedence over environment variables. If you specify both a `--json-file` argument and set the `TIPS_JSON_PATH` environment variable, the command-line argument will be used.
 
 #### Example JSON File
 
@@ -205,6 +253,12 @@ The test suite covers:
 2. **generate_greeting(name)** - Generate personalized greeting
 3. **calculate_days_until_date(target_date)** - Calculate days between dates
 4. **get_learning_tips(category)** - Get learning tips for development (categories: mcp, python, docker)
+
+**Tip:** Use the `--json-file` argument to load custom tip categories when starting the server:
+
+```bash
+python src/server.py --json-file my_custom_tips.json
+```
 
 ## Available Resources
 

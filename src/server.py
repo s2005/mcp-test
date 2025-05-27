@@ -3,14 +3,18 @@ import datetime
 import random
 import json
 import os
+import argparse
 from typing import Dict, List, Optional, Any
 
 # Create an MCP server
 mcp = FastMCP("MCP test")
 
-def load_tips_from_json() -> Dict[str, List[str]]:
+def load_tips_from_json(json_file_path: Optional[str] = None) -> Dict[str, List[str]]:
     """
-    Load tips from JSON file specified by environment variable.
+    Load tips from JSON file specified by parameter or environment variable.
+    
+    Args:
+        json_file_path: Optional path to JSON file. If provided, takes precedence over environment variable.
     
     Returns:
         Dictionary containing tips by category
@@ -27,11 +31,12 @@ def load_tips_from_json() -> Dict[str, List[str]]:
         ]
     }
     
-    # Get JSON file path from environment variable
-    json_file_path = os.getenv('TIPS_JSON_PATH')
+    # Use provided path or get from environment variable
+    if json_file_path is None:
+        json_file_path = os.getenv('TIPS_JSON_PATH')
     
     if not json_file_path:
-        print("Warning: TIPS_JSON_PATH environment variable not set. Using default tips.")
+        print("Warning: No JSON file path provided via command line or TIPS_JSON_PATH environment variable. Using default tips.")
         return default_tips
     
     try:
@@ -66,7 +71,28 @@ def load_tips_from_json() -> Dict[str, List[str]]:
         return default_tips
 
 # Load tips from JSON file (single source of truth)
-TIPS_BY_CATEGORY = load_tips_from_json()
+# This will be updated in main when args are parsed
+TIPS_BY_CATEGORY = {}
+
+def parse_arguments() -> argparse.Namespace:
+    """
+    Parse command-line arguments.
+    
+    Returns:
+        Parsed arguments namespace
+    """
+    parser = argparse.ArgumentParser(
+        description="MCP test server - Model Context Protocol implementation",
+        formatter_class=argparse.RawDescriptionHelpFormatter
+    )
+    
+    parser.add_argument(
+        '-j', '--json-file',
+        type=str,
+        help='Path to JSON file containing tips data. Takes precedence over TIPS_JSON_PATH environment variable.'
+    )
+    
+    return parser.parse_args()
 
 @mcp.tool()
 def get_current_time() -> str:
@@ -464,5 +490,11 @@ Focus on {complexity}-level patterns and include practical examples suitable for
     ]
 
 if __name__ == "__main__":
+    # Parse command-line arguments
+    args = parse_arguments()
+    
+    # Load tips with the provided JSON file path (if any)
+    TIPS_BY_CATEGORY = load_tips_from_json(args.json_file)
+    
     # mcp.run(protocol="stdio", port=8000, debug=True)
     mcp.run()
