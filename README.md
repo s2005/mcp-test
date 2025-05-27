@@ -18,11 +18,27 @@ The project follows standard Python packaging conventions with a clean separatio
 mcp-test/
 ├── src/                    # Source code directory
 │   ├── __init__.py        # Package initialization
-│   ├── server.py          # Main MCP server implementation
-│   └── client.py          # Simple MCP client for testing
+│   ├── server.py          # Main MCP server entry point (~70 lines)
+│   ├── client.py          # Simple MCP client for testing
+│   ├── utils.py           # Utility functions for tips loading
+│   ├── tools/             # MCP tools directory
+│   │   ├── __init__.py
+│   │   ├── time_tools.py  # Time-related tools
+│   │   ├── greeting_tools.py # Greeting generation tool
+│   │   └── tips_tools.py  # Learning tips tool
+│   ├── resources/         # MCP resources directory
+│   │   ├── __init__.py
+│   │   └── tips_resources.py # Tips-related resources
+│   └── prompts/           # MCP prompts directory
+│       ├── __init__.py
+│       ├── development_prompts.py # Code review, MCP development
+│       ├── learning_prompts.py    # Learning plans, debugging
+│       └── planning_prompts.py    # Project planning
 ├── tests/                  # Test directory
 │   ├── __init__.py        # Test package initialization
 │   └── tests.py           # Comprehensive test suite
+├── docs/                   # Documentation
+│   └── refactoring_plan.md # Detailed refactoring documentation
 ├── .github/               # GitHub Actions workflows
 │   └── workflows/
 │       └── test.yml       # CI/CD pipeline configuration
@@ -34,10 +50,31 @@ mcp-test/
 
 ### Key Components
 
-- **`src/server.py`**: The main MCP server implementation containing all tools and resources
-- **`src/client.py`**: A simple synchronous MCP client used for testing and development
-- **`tests/tests.py`**: Comprehensive test suite covering all server functionality
+- **`src/server.py`**: Main MCP server entry point with modular component registration (~70 lines)
+- **`src/utils.py`**: Utility functions for tips loading and data management
+- **`src/tools/`**: Modular MCP tools organized by functionality
+  - `time_tools.py`: Date/time utilities (`get_current_time`, `calculate_days_until_date`)
+  - `greeting_tools.py`: Greeting generation (`generate_greeting`)
+  - `tips_tools.py`: Learning tips retrieval (`get_learning_tips`)
+- **`src/resources/`**: MCP resources for content access
+  - `tips_resources.py`: Tips-based resources (`tips://mcp-test`, `tips://category/{category}`)
+- **`src/prompts/`**: Professional prompt templates organized by domain
+  - `development_prompts.py`: Code review and MCP development prompts
+  - `learning_prompts.py`: Learning plans and debugging assistance prompts
+  - `planning_prompts.py`: Project planning and architecture prompts
+- **`src/client.py`**: Simple synchronous MCP client for testing and development
+- **`tests/`**: Comprehensive test suite covering all server functionality
+- **`docs/`**: Documentation including detailed refactoring plans
 - **`pyproject.toml`**: Project configuration with dependencies, build settings, and test configuration
+
+### Architecture Benefits
+
+- ✅ **Separation of concerns** - each module has a single responsibility
+- ✅ **Maintainability** - easier to find and modify specific functionality  
+- ✅ **Testability** - individual components can be unit tested
+- ✅ **Scalability** - easy to add new tools/resources/prompts
+- ✅ **Code reuse** - utilities can be shared across modules
+- ✅ **Clear organization** - logical grouping by functionality
 
 ## Setup
 
