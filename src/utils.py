@@ -62,3 +62,17 @@ def load_tips_from_json(json_file_path: Optional[str] = None) -> Dict[str, List[
     except Exception as e:
         print(f"Error loading tips from {json_file_path}: {e}. Using default tips.")
         return default_tips
+
+def load_content_from_json(json_file_path: Optional[str] = None) -> dict:
+    """
+    Load content configuration from JSON file.
+    
+    Args:
+        json_file_path: Optional path to JSON file. If None, uses default content.json
+    
+    Returns:
+        Dictionary containing full content configuration
+    """
+    # Import here to avoid circular imports
+    from prompts.prompt_loader import load_content_from_json as loader_func
+    return loader_func(json_file_path)

@@ -57,7 +57,7 @@ def test_list_resources(mcp_client: SimpleMCPClient) -> None:
 def test_read_resource_mcp_tips(mcp_client: SimpleMCPClient) -> None:
     """Test reading the MCP tips resource"""
     # Read the MCP tips resource
-    result = mcp_client.read_resource("tips://mcp-test")
+    result = mcp_client.read_resource("tips://mcp")
 
     # Check for errors
     assert (
@@ -79,7 +79,7 @@ def test_read_resource_mcp_tips(mcp_client: SimpleMCPClient) -> None:
 
 def test_read_resource_category_tips(mcp_client: SimpleMCPClient) -> None:
     """Test reading category-specific tips resources"""
-    categories = ["mcp-test"]
+    categories = ["mcp"]
     
     for category in categories:
         uri = f"tips://category/{category}"

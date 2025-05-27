@@ -1,7 +1,7 @@
 def register_tips_resources(mcp, tips_by_category):
     """Register tips-related resources with the MCP server."""
     
-    @mcp.resource("tips://mcp-test")
+    @mcp.resource("tips://mcp")
     def get_learning_tips_resource() -> str:
         """
         Get a list of learning tips for MCP development.
@@ -10,10 +10,10 @@ def register_tips_resources(mcp, tips_by_category):
             Learning tips formatted as a string
         """
         # Use MCP tips from tips_by_category as default
-        tips = tips_by_category["mcp-test"]
+        tips = tips_by_category["mcp"]
         
         # Format as a readable string resource
-        formatted_tips = "MCP Development Learning Tips:\n\n"
+        formatted_tips = "MCP Tips:\n\n"
         for i, tip in enumerate(tips, 1):
             formatted_tips += f"{i}. {tip}\n"
         
