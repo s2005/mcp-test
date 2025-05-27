@@ -197,7 +197,7 @@ class TestConsolidatedPrompts(unittest.TestCase):
     
     def test_validate_prompt_structure_not_dict(self):
         """Test validating non-dictionary input."""
-        is_valid = validate_prompt_structure("not a dict")
+        is_valid = validate_prompt_structure("not a dict")  # type: ignore
         
         self.assertFalse(is_valid)
     
