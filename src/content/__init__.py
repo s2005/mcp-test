@@ -2,4 +2,4 @@
 
 from .content_manager import ContentManager
 
-__all__ = ['ContentManager']
+__all__ = ["ContentManager"]

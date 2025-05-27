@@ -3,8 +3,10 @@
 Test MCP resources functionality
 """
 
-import pytest
 from typing import Generator
+
+import pytest
+
 from src.client import SimpleMCPClient
 
 
@@ -44,14 +46,18 @@ def test_list_resources(mcp_client: SimpleMCPClient) -> None:
 
     # Verify resources list structure
     assert resources, "Expected non-empty resources list"
-    assert len(resources) >= 1, f"Expected at least 1 resource, found {len(resources)} resources"
+    assert (
+        len(resources) >= 1
+    ), f"Expected at least 1 resource, found {len(resources)} resources"
 
     # Get resource URIs
     resource_uris = [resource.get("uri") for resource in resources]
-    
+
     # Should contain tips resources
     tips_resources = [uri for uri in resource_uris if uri and "tips://" in uri]
-    assert len(tips_resources) > 0, f"Expected tips:// resources, found URIs: {resource_uris}"
+    assert (
+        len(tips_resources) > 0
+    ), f"Expected tips:// resources, found URIs: {resource_uris}"
 
 
 def test_read_resource_mcp_tips(mcp_client: SimpleMCPClient) -> None:
@@ -63,27 +69,35 @@ def test_read_resource_mcp_tips(mcp_client: SimpleMCPClient) -> None:
     assert (
         "error" not in result
     ), f"Resource read failed with JSON-RPC error: {result.get('error')}"
-    assert not result.get("isError"), f"Resource read failed with FastMCP error: {result}"
+    assert not result.get(
+        "isError"
+    ), f"Resource read failed with FastMCP error: {result}"
 
     # Verify response structure
     assert "contents" in result, f"Expected 'contents' in result, got: {result}"
     assert result["contents"], f"Expected non-empty contents, got: {result['contents']}"
-    assert len(result["contents"]) > 0, f"Expected contents array with items, got: {result['contents']}"
+    assert (
+        len(result["contents"]) > 0
+    ), f"Expected contents array with items, got: {result['contents']}"
 
     # Extract content
     content = result["contents"][0]["text"]
-      # Should contain MCP-related content
-    assert "MCP" in content or "mcp-test" in content.lower(), f"Expected MCP content in resource, got: {content[:100]}..."
-    assert "tips" in content.lower(), f"Expected tips content in resource, got: {content[:100]}..."
+    # Should contain MCP-related content
+    assert (
+        "MCP" in content or "mcp-test" in content.lower()
+    ), f"Expected MCP content in resource, got: {content[:100]}..."
+    assert (
+        "tips" in content.lower()
+    ), f"Expected tips content in resource, got: {content[:100]}..."
 
 
 def test_read_resource_category_tips(mcp_client: SimpleMCPClient) -> None:
     """Test reading category-specific tips resources"""
     categories = ["mcp"]
-    
+
     for category in categories:
         uri = f"tips://category/{category}"
-        
+
         # Read the category tips resource
         result = mcp_client.read_resource(uri)
 
@@ -91,17 +105,25 @@ def test_read_resource_category_tips(mcp_client: SimpleMCPClient) -> None:
         assert (
             "error" not in result
         ), f"Resource read failed for '{uri}' with JSON-RPC error: {result.get('error')}"
-        assert not result.get("isError"), f"Resource read failed for '{uri}' with FastMCP error: {result}"
+        assert not result.get(
+            "isError"
+        ), f"Resource read failed for '{uri}' with FastMCP error: {result}"
 
         # Verify response structure
-        assert "contents" in result, f"Expected 'contents' in result for '{uri}', got: {result}"
-        assert result["contents"], f"Expected non-empty contents for '{uri}', got: {result['contents']}"
+        assert (
+            "contents" in result
+        ), f"Expected 'contents' in result for '{uri}', got: {result}"
+        assert result[
+            "contents"
+        ], f"Expected non-empty contents for '{uri}', got: {result['contents']}"
 
         # Extract content
         content = result["contents"][0]["text"]
-        
+
         # Should contain category-specific content
-        assert category.upper() in content, f"Expected '{category.upper()}' in resource content, got: {content[:100]}..."
+        assert (
+            category.upper() in content
+        ), f"Expected '{category.upper()}' in resource content, got: {content[:100]}..."
 
 
 if __name__ == "__main__":
