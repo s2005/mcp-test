@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Test JSON tips loading functionality for LinkedIn Demo MCP server
+Test JSON tips loading functionality for MCP test server
 """
 
 import pytest

@@ -6,7 +6,7 @@ import os
 from typing import Dict, List, Optional, Any
 
 # Create an MCP server
-mcp = FastMCP("LinkedIn Demo")
+mcp = FastMCP("MCP test")
 
 def load_tips_from_json() -> Dict[str, List[str]]:
     """
@@ -14,7 +14,8 @@ def load_tips_from_json() -> Dict[str, List[str]]:
     
     Returns:
         Dictionary containing tips by category
-    """    # Default fallback tips
+    """
+    # Default fallback tips
     default_tips = {
         "mcp-test": [
             "Configure this server by adding it to your MCP client configuration file",
@@ -90,7 +91,7 @@ def generate_greeting(name: str = "User") -> str:
         A personalized greeting message
     """
     greetings = [
-        f"Hello {name}! Welcome to the LinkedIn Demo MCP server!",
+        f"Hello {name}! Welcome to the MCP test server!",
         f"Hi there, {name}! Great to see you using MCP!",
         f"Greetings {name}! Hope you're having a fantastic day!",
         f"Hey {name}! Ready to explore Model Context Protocol?"
