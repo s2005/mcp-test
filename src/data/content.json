@@ -1,0 +1,170 @@
+{
+    "tips": {
+        "mcp": [
+            "Start with simple tools and gradually add complexity",
+            "Use the MCP Inspector to test your servers during development",
+            "Read the official MCP documentation at modelcontextprotocol.io",
+            "Join the MCP community discussions on GitHub",
+            "Practice with both Python and TypeScript implementations",
+            "Test your MCP servers with Claude Desktop for real-world usage",
+            "Use proper error handling in your tool functions",
+            "Document your tools clearly with descriptive docstrings",
+            "Consider security when exposing system resources",
+            "Start with local development before deploying to production"
+        ],
+        "python": [
+            "Use virtual environments to isolate project dependencies",
+            "Follow PEP 8 style guidelines for consistent code formatting",
+            "Write comprehensive docstrings for all functions and classes",
+            "Use type hints to improve code readability and catch errors",
+            "Implement proper exception handling with try-except blocks",
+            "Use list comprehensions for concise and readable code",
+            "Learn and use Python's built-in modules like itertools and collections",
+            "Write unit tests using pytest or unittest framework",
+            "Use logging instead of print statements for debugging",
+            "Follow the DRY (Don't Repeat Yourself) principle"
+        ],
+        "docker": [
+            "Use multi-stage builds to reduce final image size",
+            "Always specify exact versions in your Dockerfile",
+            "Use .dockerignore to exclude unnecessary files",
+            "Run containers as non-root users for security",
+            "Use health checks to monitor container status",
+            "Leverage Docker layer caching for faster builds",
+            "Keep your base images updated and secure",
+            "Use docker-compose for multi-container applications",
+            "Store secrets securely using Docker secrets or environment variables",
+            "Monitor container resource usage and set appropriate limits"
+        ]
+    },
+    "prompts": {
+        "development": {
+            "code_review_prompt": {
+                "name": "code_review_prompt",
+                "description": "Generate a prompt template for code review assistance",
+                "arguments": [
+                    {
+                        "name": "language",
+                        "description": "Programming language for the code review",
+                        "required": false,
+                        "default": "python",
+                        "type": "string"
+                    },
+                    {
+                        "name": "code_type",
+                        "description": "Type of code to review (function, class, module, etc.)",
+                        "required": false,
+                        "default": "function",
+                        "type": "string"
+                    }
+                ],
+                "template": "Please review this {language} {code_type} and provide detailed feedback on:\n\n1. Code quality and best practices\n2. Performance considerations\n3. Security implications\n4. Readability and maintainability\n5. Potential bugs or edge cases\n6. Suggestions for improvement\n\nFocus on {language}-specific conventions and provide actionable recommendations.\n\nCode to review:\n[PASTE YOUR {language.upper()} {code_type.upper()} HERE]",
+                "role": "user"
+            },
+            "mcp_development_prompt": {
+                "name": "mcp_development_prompt",
+                "description": "Generate a prompt template for MCP (Model Context Protocol) development assistance",
+                "arguments": [
+                    {
+                        "name": "component_type",
+                        "description": "Type of MCP component to develop (tool, resource, prompt, server)",
+                        "required": false,
+                        "default": "tool",
+                        "type": "string"
+                    },
+                    {
+                        "name": "complexity",
+                        "description": "Complexity level (beginner, intermediate, advanced)",
+                        "required": false,
+                        "default": "intermediate",
+                        "type": "string"
+                    }
+                ],
+                "template": "Help me develop an MCP (Model Context Protocol) {component_type} at {complexity} level.\n\n**What I want to build:**\n[DESCRIBE YOUR MCP {component_type.upper()} REQUIREMENTS]\n\n**Use Case:**\n[EXPLAIN HOW THIS WILL BE USED WITH LLMs]\n\n**Technical Requirements:**\n[LIST ANY SPECIFIC TECHNICAL NEEDS OR CONSTRAINTS]\n\nPlease provide guidance on building {component_guidance} including:\n\n1. **Implementation Approach**\n   - FastMCP decorator usage (@mcp.{component_type}())\n   - Function signature and parameters\n   - Return type and format specifications\n   - Error handling best practices\n\n2. **MCP Protocol Compliance**\n   - Required fields and data structures\n   - Message formatting standards\n   - Type hints and validation\n   - Documentation requirements\n\n3. **Code Example**\n   - Complete working implementation\n   - Proper docstring documentation\n   - Input validation and error handling\n   - Integration with existing MCP server\n\n4. **Testing Strategy**\n   - Unit test examples\n   - MCP Inspector testing workflow\n   - Client-side integration testing\n   - Error scenario testing\n\n5. **Best Practices**\n   - Security considerations\n   - Performance optimization\n   - Debugging and troubleshooting\n   - Production deployment tips\n\nFocus on {complexity}-level patterns and include practical examples suitable for someone building MCP {component_type}s.",
+                "role": "user"
+            }
+        },
+        "learning": {
+            "learning_plan_prompt": {
+                "name": "learning_plan_prompt",
+                "description": "Generate a personalized learning plan prompt template",
+                "arguments": [
+                    {
+                        "name": "topic",
+                        "description": "The subject or technology to learn",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "skill_level",
+                        "description": "Current skill level (beginner, intermediate, advanced)",
+                        "required": false,
+                        "default": "beginner",
+                        "type": "string"
+                    },
+                    {
+                        "name": "timeframe",
+                        "description": "Available time for learning (e.g., \"1 month\", \"3 months\", \"6 months\")",
+                        "required": false,
+                        "default": "1 month",
+                        "type": "string"
+                    }
+                ],
+                "template": "Create a comprehensive {timeframe} learning plan for {topic} suitable for a {skill_level} level learner.\n\nPlease include:\n\n1. **Learning Objectives**: Clear, measurable goals\n2. **Prerequisites**: What should be known before starting\n3. **Weekly Breakdown**: Detailed week-by-week plan\n4. **Resources**: Books, courses, tutorials, and practice projects\n5. **Hands-on Projects**: Practical exercises to reinforce learning\n6. **Milestones**: Checkpoints to track progress\n7. **Assessment**: How to evaluate understanding\n8. **Next Steps**: What to learn after completing this plan\n\nMake the plan practical and actionable with specific recommendations for someone at the {skill_level} level.",
+                "role": "user"
+            },
+            "debugging_assistant_prompt": {
+                "name": "debugging_assistant_prompt",
+                "description": "Generate a prompt template for debugging assistance",
+                "arguments": [
+                    {
+                        "name": "language",
+                        "description": "Programming language of the code with issues",
+                        "required": false,
+                        "default": "python",
+                        "type": "string"
+                    },
+                    {
+                        "name": "error_type",
+                        "description": "Type of error (runtime, syntax, logic, performance)",
+                        "required": false,
+                        "default": "runtime",
+                        "type": "string"
+                    }
+                ],
+                "template": "Help me debug this {language} code that has a {error_type} error.\n\nPlease provide a systematic debugging approach focusing on {debugging_steps}.\n\n**Error Information:**\n[DESCRIBE THE ERROR OR UNEXPECTED BEHAVIOR]\n\n**Code:**\n[PASTE THE PROBLEMATIC {language.upper()} CODE HERE]\n\n**Expected Behavior:**\n[DESCRIBE WHAT SHOULD HAPPEN]\n\n**Actual Behavior:**\n[DESCRIBE WHAT ACTUALLY HAPPENS]\n\n**Environment Details:**\n- Language: {language}\n- Error Type: {error_type}\n- [ADD ANY RELEVANT ENVIRONMENT INFO]\n\nPlease provide:\n1. Root cause analysis\n2. Step-by-step debugging approach\n3. Specific fix recommendations\n4. Prevention strategies for similar issues\n5. Testing suggestions to verify the fix",
+                "role": "user"
+            }
+        },
+        "planning": {
+            "project_planning_prompt": {
+                "name": "project_planning_prompt",
+                "description": "Generate a project planning and architecture prompt template",
+                "arguments": [
+                    {
+                        "name": "project_type",
+                        "description": "Type of project (web app, API, mobile app, data pipeline, etc.)",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "team_size",
+                        "description": "Size of the development team",
+                        "required": false,
+                        "default": "1-3",
+                        "type": "string"
+                    },
+                    {
+                        "name": "timeline",
+                        "description": "Expected project timeline",
+                        "required": false,
+                        "default": "1-3 months",
+                        "type": "string"
+                    }
+                ],
+                "template": "Help me plan and architect a {project_type} project for a team of {team_size} people with a {timeline} timeline.\n\n**Project Requirements:**\n[DESCRIBE YOUR PROJECT REQUIREMENTS AND GOALS]\n\n**Technical Constraints:**\n[LIST ANY TECHNICAL CONSTRAINTS, PREFERRED TECHNOLOGIES, ETC.]\n\n**Target Audience:**\n[DESCRIBE WHO WILL USE THIS PROJECT]\n\nPlease provide a comprehensive project plan including:\n\n1. **Architecture Design**\n   - System architecture overview\n   - Technology stack recommendations\n   - Database design considerations\n   - API design (if applicable)\n\n2. **Development Plan**\n   - Project phases and milestones\n   - Task breakdown and estimation\n   - Team role assignments\n   - Development workflow and branching strategy\n\n3. **Technical Specifications**\n   - Infrastructure requirements\n   - Security considerations\n   - Performance requirements\n   - Scalability planning\n\n4. **Project Management**\n   - Timeline with realistic deadlines\n   - Risk assessment and mitigation\n   - Testing strategy\n   - Deployment plan\n\n5. **Best Practices**\n   - Code quality standards\n   - Documentation requirements\n   - Monitoring and maintenance plan\n\nTailor the recommendations for a {team_size} person team working over {timeline}.",
+                "role": "user"
+            }
+        }
+    }
+}

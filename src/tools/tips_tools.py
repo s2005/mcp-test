@@ -15,8 +15,8 @@ def register_tips_tools(mcp, tips_by_category):
             List of helpful tips for learning
         """
         if category is None:
-            # Default behavior - return MCP-test tips from tips_by_category
-            return tips_by_category["mcp-test"].copy()
+            # Default behavior - return MCP tips from tips_by_category
+            return tips_by_category["mcp"].copy()
         
         # Convert category to lowercase for case-insensitive matching
         category_lower = category.lower()

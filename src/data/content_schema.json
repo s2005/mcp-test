@@ -1,0 +1,122 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "title": "MCP Content Configuration",
+    "description": "Schema for MCP server content including tips and prompts",
+    "type": "object",
+    "properties": {
+        "tips": {
+            "type": "object",
+            "description": "Learning tips organized by category",
+            "patternProperties": {
+                "^[a-zA-Z_][a-zA-Z0-9_]*$": {
+                    "type": "array",
+                    "items": {
+                        "type": "string",
+                        "minLength": 1
+                    }
+                }
+            }
+        },
+        "prompts": {
+            "type": "object",
+            "description": "Prompt templates organized by category",
+            "patternProperties": {
+                "^[a-zA-Z_][a-zA-Z0-9_]*$": {
+                    "type": "object",
+                    "patternProperties": {
+                        "^[a-zA-Z_][a-zA-Z0-9_]*$": {
+                            "$ref": "#/definitions/prompt"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "prompt": {
+            "type": "object",
+            "required": [
+                "name",
+                "description",
+                "template"
+            ],
+            "properties": {
+                "name": {
+                    "type": "string",
+                    "pattern": "^[a-zA-Z_][a-zA-Z0-9_]*$",
+                    "description": "Unique identifier for the prompt"
+                },
+                "description": {
+                    "type": "string",
+                    "minLength": 1,
+                    "description": "Human-readable description of the prompt's purpose"
+                },
+                "arguments": {
+                    "type": "array",
+                    "description": "List of parameters the prompt accepts",
+                    "items": {
+                        "$ref": "#/definitions/argument"
+                    }
+                },
+                "template": {
+                    "type": "string",
+                    "minLength": 1,
+                    "description": "Template string with {parameter} placeholders"
+                },
+                "role": {
+                    "type": "string",
+                    "enum": [
+                        "user",
+                        "assistant",
+                        "system"
+                    ],
+                    "default": "user",
+                    "description": "Message role for the prompt"
+                }
+            }
+        },
+        "argument": {
+            "type": "object",
+            "required": [
+                "name",
+                "description"
+            ],
+            "properties": {
+                "name": {
+                    "type": "string",
+                    "pattern": "^[a-zA-Z_][a-zA-Z0-9_]*$",
+                    "description": "Parameter name"
+                },
+                "description": {
+                    "type": "string",
+                    "minLength": 1,
+                    "description": "Parameter description"
+                },
+                "required": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Whether this parameter is required"
+                },
+                "default": {
+                    "type": [
+                        "string",
+                        "number",
+                        "boolean",
+                        "null"
+                    ],
+                    "description": "Default value if parameter not provided"
+                },
+                "type": {
+                    "type": "string",
+                    "enum": [
+                        "string",
+                        "number",
+                        "boolean"
+                    ],
+                    "default": "string",
+                    "description": "Expected parameter type"
+                }
+            }
+        }
+    }
+}
