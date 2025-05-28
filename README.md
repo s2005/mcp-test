@@ -41,7 +41,8 @@ mcp-test/
 │   └── refactoring_plan.md # Detailed refactoring documentation
 ├── .github/                # GitHub Actions workflows
 │   └── workflows/
-│       └── test.yml        # CI/CD pipeline configuration
+│       ├── test.yml        # Automated CI/CD pipeline
+│       └── ci.yml          # Manual CI pipeline with configurable options
 ├── pyproject.toml          # Project configuration and dependencies
 ├── README.md               # This file
 ├── uv.lock                 # Dependency lock file
@@ -284,6 +285,28 @@ The test suite covers:
 - Error handling and edge cases
 - Client-server communication
 
+## Code Quality and Linting
+
+This project maintains high code quality standards through automated linting and formatting tools. For detailed information about linting setup, configuration, and usage:
+
+- **Quick Reference**: See [`LINTING_SETUP.md`](LINTING_SETUP.md) for implementation summary and features
+- **Detailed Usage Guide**: See [`scripts/README.md`](scripts/README.md) for comprehensive usage instructions
+
+### Quick Commands
+
+```bash
+# Run all linting checks
+make lint
+
+# Automatically fix linting issues
+make fix-lint
+
+# Complete development workflow
+make all
+```
+
+The project uses flake8, black, isort, autopep8, pyflakes, and mypy to ensure consistent code formatting, PEP 8 compliance, and type safety.
+
 ## Available Tools
 
 1. **get_current_time()** - Get current date and time
@@ -365,20 +388,41 @@ Get assistance with Model Context Protocol development.
 
 ## CI/CD
 
-This project includes a GitHub Actions workflow that automatically runs tests on:
+This project includes two GitHub Actions workflows:
+
+### Automated Testing (`test.yml`)
+
+Automatically runs tests on:
 
 - Push to main branch
 - Pull requests to main branch
 
 The workflow:
 
-- Tests against Python versions 3.10, 3.11, and 3.12
+- Tests against Python versions 3.10, 3.11, 3.12, and 3.13
 - Installs dependencies using `uv`
 - Runs the test suite with `pytest`
 - Generates code coverage reports
-- Uploads coverage data to Codecov
 
-The workflow file is located at `.github/workflows/test.yml`.
+### Manual CI Pipeline (`ci.yml`)
+
+A comprehensive CI pipeline that can be triggered manually via GitHub Actions UI:
+
+- **Configurable Python Version**: Choose from 3.10, 3.11, 3.12, or 3.13 (default: 3.12)
+- **Optional Coverage Reports**: Enable/disable coverage report generation
+- **Full CI Suite**: Runs `make ci` which includes:
+  - Development dependency installation
+  - Complete linting checks (flake8, black, isort, mypy)
+  - Full test suite with coverage
+- **Artifacts**: Uploads HTML coverage reports and optionally sends coverage to Codecov
+
+To trigger the manual CI pipeline:
+
+1. Go to the "Actions" tab in your GitHub repository
+2. Select "CI Pipeline" workflow
+3. Click "Run workflow"
+4. Choose your desired Python version and coverage options
+5. Click "Run workflow" to start
 
 ## Example Usage in Claude
 
