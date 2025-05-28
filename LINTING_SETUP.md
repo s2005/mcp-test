@@ -16,17 +16,17 @@
 
 ### Configuration Files
 
-3. **`Makefile`** - Convenient development commands
+1. **`Makefile`** - Convenient development commands
    - Provides easy-to-remember targets
    - Supports full development workflow
    - Includes CI/CD friendly targets
 
-4. **`.flake8`** - Flake8 configuration
+2. **`.flake8`** - Flake8 configuration
    - Sets line length to 88 (black compatible)
    - Excludes common directories
    - Configures appropriate ignores
 
-5. **`scripts/README.md`** - Documentation
+3. **`scripts/README.md`** - Documentation
    - Usage instructions for all tools
    - Troubleshooting guide
    - Configuration explanations
