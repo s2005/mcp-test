@@ -225,7 +225,7 @@ def mcp_client() -> Generator[SimpleMCPClient, None, None]:
     try:
         # Start server
         server_started = client.start_server(
-            "python", ["src/server.py", "-j", "tests/data/temp_tips_categories.json"]
+            "python", ["src/server.py", "-j", "src/data/content.json"]
         )
         assert server_started, "Failed to start MCP server"
 
