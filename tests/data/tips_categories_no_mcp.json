@@ -1,0 +1,26 @@
+{
+    "python": [
+        "Use virtual environments to isolate project dependencies",
+        "Follow PEP 8 style guidelines for consistent code formatting",
+        "Write comprehensive docstrings for all functions and classes",
+        "Use type hints to improve code readability and catch errors",
+        "Implement proper exception handling with try-except blocks",
+        "Use list comprehensions for concise and readable code",
+        "Learn and use Python's built-in modules like itertools and collections",
+        "Write unit tests using pytest or unittest framework",
+        "Use logging instead of print statements for debugging",
+        "Follow the DRY (Don't Repeat Yourself) principle"
+    ],
+    "docker": [
+        "Use multi-stage builds to reduce final image size",
+        "Always specify exact versions in your Dockerfile",
+        "Use .dockerignore to exclude unnecessary files",
+        "Run containers as non-root users for security",
+        "Use health checks to monitor container status",
+        "Leverage Docker layer caching for faster builds",
+        "Keep your base images updated and secure",
+        "Use docker-compose for multi-container applications",
+        "Store secrets securely using Docker secrets or environment variables",
+        "Monitor container resource usage and set appropriate limits"
+    ]
+}
