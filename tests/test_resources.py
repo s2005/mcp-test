@@ -126,5 +126,37 @@ def test_read_resource_category_tips(mcp_client: SimpleMCPClient) -> None:
         ), f"Expected '{category.upper()}' in resource content, got: {content[:100]}..."
 
 
+def test_read_resource_mcp_tips_missing(mcp_client: SimpleMCPClient) -> None:
+    """Test reading MCP tips when they are missing from the data source."""
+    # This test requires a server instance with specific data.
+    # We'll create a new client and server instance for this test case
+    # to avoid interfering with the shared mcp_client fixture if it uses default data.
+
+    client = SimpleMCPClient()
+    try:
+        # Start server with the JSON file that has no MCP tips
+        server_started = client.start_server(
+            "python", ["src/server.py", "-j", "tests/data/tips_categories_no_mcp.json"]
+        )
+        assert server_started, "Failed to start MCP server for missing tips test"
+
+        initialized = client.initialize()
+        assert initialized, "Failed to initialize MCP client for missing tips test"
+
+        result = client.read_resource("tips://mcp")
+
+        assert "error" not in result, f"Resource read failed with JSON-RPC error: {result.get('error')}"
+        assert not result.get("isError"), f"Resource read failed with FastMCP error: {result}"
+        assert "contents" in result, f"Expected 'contents' in result, got: {result}"
+        assert result["contents"], f"Expected non-empty contents, got: {result['contents']}"
+        
+        content = result["contents"][0]["text"]
+        expected_message = "MCP Tips:\n\nNo MCP tips available at the moment."
+        assert content == expected_message, f"Expected '{expected_message}', got '{content}'"
+
+    finally:
+        client.close()
+
+
 if __name__ == "__main__":
     pytest.main([__file__, "-v"])

@@ -10,12 +10,15 @@ def register_tips_resources(mcp, tips_by_category):
             Learning tips formatted as a string
         """
         # Use MCP tips from tips_by_category as default
-        tips = tips_by_category["mcp"]
+        tips = tips_by_category.get("mcp")
 
         # Format as a readable string resource
-        formatted_tips = "MCP Tips:\n\n"
-        for i, tip in enumerate(tips, 1):
-            formatted_tips += f"{i}. {tip}\n"
+        if tips is None:
+            formatted_tips = "MCP Tips:\n\nNo MCP tips available at the moment."
+        else:
+            formatted_tips = "MCP Tips:\n\n"
+            for i, tip in enumerate(tips, 1):
+                formatted_tips += f"{i}. {tip}\n"
 
         return formatted_tips
 
