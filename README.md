@@ -9,6 +9,7 @@ This MCP server provides a collection of tools, resources, and prompts to test M
 - **Tools**: Time and date utilities, greeting generation, date calculations, and learning tips
 - **Resources**: MCP development tips and documentation (multiple categories: MCP, Python, Docker)
 - **Prompts**: Professional prompt templates for code review, learning plans, debugging assistance, project planning, and MCP development
+- **Content Management**: Centralized JSON-based configuration system for all content
 
 ## Project Structure
 
@@ -20,7 +21,13 @@ mcp-test/
 │   ├── __init__.py        # Package initialization
 │   ├── server.py          # Main MCP server entry point (~70 lines)
 │   ├── client.py          # Simple MCP client for testing
-│   ├── utils.py           # Utility functions for tips loading
+│   ├── utils.py           # Utility functions for content loading
+│   ├── content/           # Content management directory
+│   │   ├── __init__.py
+│   │   └── content_manager.py # Centralized content management
+│   ├── data/              # JSON configuration files
+│   │   ├── content.json   # Externalized content (tips, messages, prompts)
+│   │   └── content_schema.json # JSON schema for validation
 │   ├── tools/             # MCP tools directory
 │   │   ├── __init__.py
 │   │   ├── time_tools.py  # Time-related tools
@@ -31,14 +38,18 @@ mcp-test/
 │   │   └── tips_resources.py # Tips-related resources
 │   └── prompts/           # MCP prompts directory
 │       ├── __init__.py
-│       ├── development_prompts.py # Code review, MCP development
-│       ├── learning_prompts.py    # Learning plans, debugging
-│       └── planning_prompts.py    # Project planning
+│       ├── prompt_loader.py # Prompt loading utilities
+│       ├── prompt_registry.py # Prompt registration system
+│       ├── prompts.py     # Consolidated prompt definitions
+│       └── validator.py   # Prompt structure validation
 ├── tests/                  # Test directory
 │   ├── __init__.py         # Test package initialization
-│   └── tests.py            # Comprehensive test suite
-├── docs/                   # Documentation
-│   └── refactoring_plan.md # Detailed refactoring documentation
+│   ├── data/               # Test data files
+│   │   └── tips_categories.json # Test JSON data
+│   ├── test_content_manager.py # Content manager tests
+│   ├── test_dynamic_configurations.py # Dynamic JSON testing
+│   ├── test_integration.py # Integration tests
+│   └── various other test files # Comprehensive test suite
 ├── .github/                # GitHub Actions workflows
 │   └── workflows/
 │       ├── test.yml        # Automated CI/CD pipeline
@@ -52,20 +63,24 @@ mcp-test/
 ### Key Components
 
 - **`src/server.py`**: Main MCP server entry point with modular component registration (~70 lines)
-- **`src/utils.py`**: Utility functions for tips loading and data management
+- **`src/content/content_manager.py`**: Centralized content management for all externalized content
+- **`src/data/`**: JSON configuration files
+  - `content.json`: Externalized content including tips, messages, and prompt templates
+  - `content_schema.json`: JSON schema for validating content structure
+- **`src/utils.py`**: Utility functions for content loading and data management
 - **`src/tools/`**: Modular MCP tools organized by functionality
   - `time_tools.py`: Date/time utilities (`get_current_time`, `calculate_days_until_date`)
-  - `greeting_tools.py`: Greeting generation (`generate_greeting`)
-  - `tips_tools.py`: Learning tips retrieval (`get_learning_tips`)
+  - `greeting_tools.py`: Greeting generation using templates from ContentManager
+  - `tips_tools.py`: Learning tips retrieval from ContentManager
 - **`src/resources/`**: MCP resources for content access
   - `tips_resources.py`: Tips-based resources (`tips://mcp-test`, `tips://category/{category}`)
-- **`src/prompts/`**: Professional prompt templates organized by domain
-  - `development_prompts.py`: Code review and MCP development prompts
-  - `learning_prompts.py`: Learning plans and debugging assistance prompts
-  - `planning_prompts.py`: Project planning and architecture prompts
+- **`src/prompts/`**: Professional prompt templates and handling
+  - `prompts.py`: Consolidated prompt definitions using JSON-based configuration
+  - `prompt_loader.py`: Prompt loading and template processing
+  - `prompt_registry.py`: Prompt registration system
+  - `validator.py`: Prompt structure validation against schema
 - **`src/client.py`**: Simple synchronous MCP client for testing and development
 - **`tests/`**: Comprehensive test suite covering all server functionality
-- **`docs/`**: Documentation including detailed refactoring plans
 - **`pyproject.toml`**: Project configuration with dependencies, build settings, and test configuration
 
 ### Architecture Benefits
@@ -76,6 +91,9 @@ mcp-test/
 - ✅ **Scalability** - easy to add new tools/resources/prompts
 - ✅ **Code reuse** - utilities can be shared across modules
 - ✅ **Clear organization** - logical grouping by functionality
+- ✅ **Content externalization** - all content stored in JSON configuration files
+- ✅ **Dynamic configuration** - content can be modified without changing code
+- ✅ **Centralized content management** - single source of truth for all content
 
 ## Setup
 
@@ -179,12 +197,14 @@ python src/server.py -j /path/to/your/custom_tips.json
 
 ## Configuration
 
-### Tips Content
+### Content Configuration
 
-The server loads learning tips from a JSON file that can be specified in two ways:
+The server loads all content (tips, greetings, prompts) from a JSON configuration file that can be specified in two ways:
 
 1. **Command-line argument** (takes precedence)
 2. **Environment variable** (fallback option)
+
+The content is managed by the `ContentManager` class which provides a centralized API for accessing all externalized content.
 
 #### Command-Line Arguments
 
